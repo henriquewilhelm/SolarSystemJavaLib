@@ -1,4 +1,7 @@
 package br.com.henriquewilhelm.orbit;
+
+import java.util.Date;
+
 /**
  * The Event class gathers the calculations of one element of the solar system  
  * (Sun, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto)
@@ -9,14 +12,23 @@ package br.com.henriquewilhelm.orbit;
  * Time, antimeridianCrossing (Midnigth)
  * position (rightAscention, declination, longitudeEcliptic and distance)</p>
  * 
+ * @author Henrique Wilhelm v1.0.0
  * @author zoglmannk v1.0.0
- * @version v1.0.0
+ * @version v2.0.0
  */
 public class Event {
 	/**
 	 * Name of Element of system solar
 	 */
 	public String name;
+	/**
+	 * Julian Date Number used in calculations
+	 */
+	public double julianDate;
+	/**
+	 * Date used in calculations
+	 */
+	public Date date;
 	/**
 	 * Element of system solar Rise
 	 */
@@ -50,6 +62,9 @@ public class Event {
 	 * Position (rightAscention, declination, longitudeEcliptic and distance)
 	 */
 	public Position positionTomorrow;
+	
+	public String zodiac;
+	/**
 	/**
 	 * Type of Horizon Crossing (NO_CHANGE_PREVIOUSLY_RISEN, NO_CHANGE_PREVIOUSLY_SET, ONLY_RISEN 
 	 * ONLY_SET, RISEN_AND_SET) 

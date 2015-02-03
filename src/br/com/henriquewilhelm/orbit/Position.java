@@ -2,6 +2,7 @@ package br.com.henriquewilhelm.orbit;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 
 /**
  * The Position class gathers the position of one element of the solar system  
@@ -22,7 +23,8 @@ public class Position {
 	public double rightAscention;    //in radians
 	public double declination;		 //in radians
 	public double longitudeEcliptic; //in Degree
-	public double distance;			 //in radians
+	public double distance;
+
 	/**
 	 * Contrutor with without distance
 	 * @param rightAscention double value

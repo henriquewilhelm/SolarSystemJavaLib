@@ -2,8 +2,9 @@ package br.com.henriquewilhelm.orbit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.lang.Math;
+
 /**
- * This class computes the right ascension, declination, longitudeEcliptic and distance of the sun and the 	planets.
+ * This class computes the right ascension, declination, longitudeEcliptic and distance of the sun and the planets.
  * The orbits of the major planets can be modeled as ellipses with the Sun at one focus. The effect of gravitational
  * interactions between the planets perturbs these orbits so that an ellipse is not a exact match with a true orbit. 
  * Six numbers, the mean orbital elements, specify an elliptical orbit. Mean orbital elements average the effects
@@ -77,7 +78,7 @@ public class OrbitCalculator {
 		double dt;
 		// compute day number for date/time (days since J2000)
 		dt = daySinceJ2000(calendar);
-		System.out.println("Julian Date OF J2000 "+dt);
+		//System.out.println("Julian Date OF J2000 "+dt);
 		// compute location of objects
 		for (int i = 0; i < 9; i++) {
 			obj = get_coord(i, dt);
@@ -102,7 +103,7 @@ public class OrbitCalculator {
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		int minute = calendar.get(Calendar.MINUTE);
 		int second = calendar.get(Calendar.SECOND);
-//		 System.out.println("UTC: " + month + "/" + day + "/" + year + "  " + hour + ":" + minute + ":" + second);
+		//System.out.println("UTC: " + month + "/" + day + "/" + year + "  " + hour + ":" + minute + ":" + second);
 
 		if ((month == 1) || (month == 2)) {
 			year = year - 1;
@@ -125,7 +126,6 @@ public class OrbitCalculator {
 	 *  @param dateTime value of current dateTime since 2000
 	 *  @return Event Event of Elements
 	 */
-	 
 	private Event get_coord(int element, double dateTime) {
 		Event obj = new Event();
 		Coordinates coordObj = new Coordinates();
@@ -344,7 +344,5 @@ public class OrbitCalculator {
 
 	public void setPlanetList(ArrayList<Event> planetList) {
 		this.planetList = planetList;
-	}
-
-	
+	}	
 }

@@ -1,5 +1,7 @@
 package br.com.henriquewilhelm.orbit;
 
+import java.util.Date;
+
 /**
  * The class extends of Event class, gathers the calculations of Moon
  * The calculations are:
@@ -22,6 +24,15 @@ public class MoonEvent extends Event {
 	 */
 	public double illuminationPercent;
 	/**
+	 * String Phase
+	 */
+	public String phase;
+	/**
+	 * String Perigee Or Apogee
+	 */
+	public String perigeeOrApogee;
+	
+	/**
 	 * Construtor without Event
 	 */
 	public MoonEvent() { }
@@ -40,5 +51,6 @@ public class MoonEvent extends Event {
 		this.risenAmount = event.risenAmount;
 		this.setAmount = event.setAmount;
 		this.position = event.position;
+		this.zodiac = event.zodiac;
 	}
 }

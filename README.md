@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Solar System Java Library Calculator
 ========================
 
@@ -11,3 +12,7 @@ Basically the work Zoglmann performs calculations on the orbit of the Moon and t
 
 ## Technologies Used
 - Java 1.8
+=======
+# SolarSystemJavaLib
+Orbit Planet, Solar System, Eclipse Times, Apogee and Perigee Times, Zodiac Constellation
+>>>>>>> 6be3c30fdc8533e9ebb188870489fab0fd15191c

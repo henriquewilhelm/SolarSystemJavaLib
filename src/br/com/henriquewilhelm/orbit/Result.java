@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
+
 /**
  * This class gathered the results of calculations performed by the calculator of the solar system.
  * The calculations are called Event
@@ -38,6 +39,18 @@ public class Result {
 	 */
 	public MoonEvent moonToday, moonTomorrow;
 	
+	ArrayList<ArrayList<MoonEvent>> lunarYear;
+	
+	/**
+	 * Moon's Apogeu ArrayList per year
+	 */
+	public ArrayList<MoonEvent> apogeeList;
+	
+	/**
+	 * Moon's Perigeu ArrayList per year
+	 */
+	public ArrayList<MoonEvent> perigeeList;
+	
 	/**
 	 * Contrutor of Result
 	 */
@@ -53,7 +66,7 @@ public class Result {
 		PrintWriter writer = new PrintWriter(sw);
 		
 		if(sun.rise != null) {
-			writer.printf("Sunrise %s", formatTimeAndAzimuth(sun.rise, sun.riseAzimuth));
+			writer.printf("\nSunrise %s", formatTimeAndAzimuth(sun.rise, sun.riseAzimuth));
 		}
 		
 		if(sun.set != null) {
@@ -82,8 +95,8 @@ public class Result {
 			//nothing
 		}
 		
-		writer.printf("Longitude Ecliptical %s\n", sun.position.longitudeEcliptic);
-		
+		writer.printf("\nLongitude Ecliptical %s	", sun.position.longitudeEcliptic);
+		writer.printf("\nZodiac %s\n", sun.zodiac);
 		
 		writer.printf("Day Length  : %s", sun.risenAmount);
 		if(sun.meridianCrossing==null) {
@@ -100,8 +113,8 @@ public class Result {
 		}
 
 		writer.printf("Golden Hour          : (sunrise to %s, %s to sunset)\n", 
-				      replaceNull(goldenHour.rise),
-				      replaceNull(goldenHour.set));
+			      replaceNull(goldenHour.rise),
+			      replaceNull(goldenHour.set));
 
 		
 		writer.printf("Civil Twilight       : (%s to sunrise, sunset to %s)",
@@ -123,29 +136,81 @@ public class Result {
 					  replaceNull(astronomicalTwilight.setAmount));
 
 		
-		writer.printf("Today's    Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Illumination: %3.0f%%	Long. Ecliptic%3.1f	\n" ,
+		writer.printf("\nMoon Today\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+				 	moonToday.date,
 					  formatTimeAndAzimuth(moonToday.rise, moonToday.riseAzimuth),
 					  formatTimeAndAzimuth(moonToday.set , moonToday.setAzimuth),
-					  moonToday.ageInDays, 
+					  moonToday.ageInDays,
+					  moonToday.phase,
 					  moonToday.illuminationPercent,
-					  moonToday.position.longitudeEcliptic);
-		writer.printf("Tomorrow's Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Illumination: %3.0f%%	Long. Ecliptic %3.1f\n", 
-					  formatTimeAndAzimuth(moonTomorrow.rise, moonTomorrow.riseAzimuth),
+					  moonToday.position.longitudeEcliptic,
+					  moonToday.position.distance,
+					  moonToday.zodiac,
+					  moonToday.perigeeOrApogee);
+		writer.printf("Moon Tomorrow\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+				moonTomorrow.date,
+					formatTimeAndAzimuth(moonTomorrow.rise, moonTomorrow.riseAzimuth),
 					  formatTimeAndAzimuth(moonTomorrow.set,  moonTomorrow.setAzimuth),
-					  moonTomorrow.ageInDays, 
+					  moonTomorrow.ageInDays,
+					  moonTomorrow.phase,
 					  moonTomorrow.illuminationPercent,
-					  moonTomorrow.position.longitudeEcliptic);
-		
+					  moonTomorrow.position.longitudeEcliptic,
+					  moonTomorrow.position.distance,
+					  moonTomorrow.zodiac,
+					  moonTomorrow.perigeeOrApogee);
+	
+		writer.println("\nLunar Year");
+		for (int i = 0; i < lunarYear.size(); i++) {
+			for (int j = 0; j < lunarYear.get(i).size(); j++) {
+				writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+						lunarYear.get(i).get(j).date,
+						  formatTimeAndAzimuth(lunarYear.get(i).get(j).rise, lunarYear.get(i).get(j).riseAzimuth),
+						  formatTimeAndAzimuth(lunarYear.get(i).get(j).set , lunarYear.get(i).get(j).setAzimuth),
+						  lunarYear.get(i).get(j).ageInDays,
+						  lunarYear.get(i).get(j).phase,
+						  lunarYear.get(i).get(j).illuminationPercent,
+						  lunarYear.get(i).get(j).position.longitudeEcliptic,						  
+						  lunarYear.get(i).get(j).position.distance,
+						  lunarYear.get(i).get(j).zodiac,
+						  lunarYear.get(i).get(j).perigeeOrApogee);
+			}
+		}
+		writer.println("\nApogee");
+		for (int j = 0; j < apogeeList.size(); j++) {
+			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	"
+					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" , apogeeList.get(j).date,
+					  formatTimeAndAzimuth(apogeeList.get(j).rise, apogeeList.get(j).riseAzimuth),
+					  formatTimeAndAzimuth(apogeeList.get(j).set , apogeeList.get(j).setAzimuth),
+					  apogeeList.get(j).ageInDays, 
+					  apogeeList.get(j).phase,
+					  apogeeList.get(j).illuminationPercent,
+					  apogeeList.get(j).position.longitudeEcliptic,
+					  apogeeList.get(j).position.distance,
+					  apogeeList.get(j).zodiac);
+		}
+		writer.println("\nPerigee");
+		for (int j = 0; j < perigeeList.size(); j++) {
+			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f	days   Phase %s	"
+					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" , perigeeList.get(j).date,
+					  formatTimeAndAzimuth(perigeeList.get(j).rise, perigeeList.get(j).riseAzimuth),
+					  formatTimeAndAzimuth(perigeeList.get(j).set , perigeeList.get(j).setAzimuth),
+					  perigeeList.get(j).ageInDays,
+					  perigeeList.get(j).phase,
+					  perigeeList.get(j).illuminationPercent,
+					  perigeeList.get(j).position.longitudeEcliptic,
+					  perigeeList.get(j).position.distance,
+					  perigeeList.get(j).zodiac);
+		}
+		writer.println("\nPlanets");
 		for (int i = 0; i < planetList.size(); i++) {
-			writer.printf("Today %s planet (set: %s) (rise %s) (Long. Ecliptic %3.1f) (Distance %f3,1)\n", 
+			writer.printf("Today %s	planet SET: %s	RISE %s	Long. Ecliptic %3.1f	Distance %f3,1	Zodiac %s\n", 
 					planetList.get(i).name,
 					formatTimeAndAzimuth(planetList.get(i).rise, planetList.get(i).riseAzimuth),
 					formatTimeAndAzimuth(planetList.get(i).set,  planetList.get(i).setAzimuth),
 					planetList.get(i).position.longitudeEcliptic,
-					planetList.get(i).position.distance);
+					planetList.get(i).position.distance,
+					planetList.get(i).zodiac);
 		}
-		
-		
 		writer.flush();
 		return sw.getBuffer().toString();
 	}
@@ -157,7 +222,7 @@ public class Result {
 	 */
 	private String formatTimeAndAzimuth(Time t, double azimuth) {
 		if(t == null) {
-			return "--None--";
+			return " ----------- None ----------- ";
 		}
 		
 		StringWriter sw = new StringWriter();
