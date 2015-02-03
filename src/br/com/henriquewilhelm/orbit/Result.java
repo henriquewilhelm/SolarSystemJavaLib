@@ -162,8 +162,8 @@ public class Result {
 		writer.println("\nLunar Year");
 		for (int i = 0; i < lunarYear.size(); i++) {
 			for (int j = 0; j < lunarYear.get(i).size(); j++) {
-				writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
-						lunarYear.get(i).get(j).date,
+				writer.printf("%3.0f	%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+						lunarYear.get(i).get(j).julianDate, lunarYear.get(i).get(j).date,
 						  formatTimeAndAzimuth(lunarYear.get(i).get(j).rise, lunarYear.get(i).get(j).riseAzimuth),
 						  formatTimeAndAzimuth(lunarYear.get(i).get(j).set , lunarYear.get(i).get(j).setAzimuth),
 						  lunarYear.get(i).get(j).ageInDays,
@@ -178,7 +178,8 @@ public class Result {
 		writer.println("\nApogee");
 		for (int j = 0; j < apogeeList.size(); j++) {
 			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	"
-					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" , apogeeList.get(j).date,
+					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" ,
+					apogeeList.get(j).date,
 					  formatTimeAndAzimuth(apogeeList.get(j).rise, apogeeList.get(j).riseAzimuth),
 					  formatTimeAndAzimuth(apogeeList.get(j).set , apogeeList.get(j).setAzimuth),
 					  apogeeList.get(j).ageInDays, 
@@ -191,7 +192,8 @@ public class Result {
 		writer.println("\nPerigee");
 		for (int j = 0; j < perigeeList.size(); j++) {
 			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f	days   Phase %s	"
-					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" , perigeeList.get(j).date,
+					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" ,
+					perigeeList.get(j).date,
 					  formatTimeAndAzimuth(perigeeList.get(j).rise, perigeeList.get(j).riseAzimuth),
 					  formatTimeAndAzimuth(perigeeList.get(j).set , perigeeList.get(j).setAzimuth),
 					  perigeeList.get(j).ageInDays,

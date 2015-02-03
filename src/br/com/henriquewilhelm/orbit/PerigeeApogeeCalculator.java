@@ -17,9 +17,15 @@ import java.util.Date;
 public class PerigeeApogeeCalculator {
 
 	/**
-	 * double number DEGREES TO RADIANS
+	 * String to a given length with a given fill character.
 	 */
-	private static final double DEG2RAD = Math.PI / 180;
+	public final static String[] Months = new String[] { "Jan", "Feb", "Mar",
+			"Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+	int[] date = new int[3];
+	int[] time = new int[3];
+
+	MoonEvent lua;
 	/**
 	 * Current Calendar
 	 */
@@ -27,73 +33,31 @@ public class PerigeeApogeeCalculator {
 	/**
 	 * Apogee List
 	 */
-	private ArrayList<MoonEvent> apogeeList;
+	private ArrayList<Date> apogeeList;
 	/**
 	 * Perigee List
 	 */
-	private ArrayList<MoonEvent> perigeeList;
+	private ArrayList<Date> perigeeList;
 
-	public ArrayList<MoonEvent> getApogeuList() {
+	public ArrayList<Date> getApogeeList() {
 		return apogeeList;
 	}
 
-	public void setApogeuList(ArrayList<MoonEvent> apogeuList) {
-		this.apogeeList = apogeuList;
+	public void setApogeeList(ArrayList<Date> apogeeList) {
+		this.apogeeList = apogeeList;
+		
 	}
 
-	public ArrayList<MoonEvent> getPerigeuList() {
+	public ArrayList<Date> getPerigeeList() {
 		return perigeeList;
 	}
 
-	public void setPerigeuList(ArrayList<MoonEvent> perigeuList) {
-		this.perigeeList = perigeuList;
+	public void setPerigeeList(ArrayList<Date> perigeeList) {
+		this.perigeeList = perigeeList;
 	}
-
-	private void addApogeu(MoonEvent lua) {
-		getApogeuList().add(lua);
-	}
-
-	private void addPerieu(MoonEvent lua) {
-		getPerigeuList().add(lua);
-	}
-	/**
-	 * 
-	 * @param calendar current calendar date
-	 * @return String value "Apogee" or "Perigee"
-	 */
-	public String isApogeuOrPerigeu(Calendar calendar) {
-		// System.out.println("APOGEU "+calendar.getTime());
-
-		for (int index = 0; index < getApogeuList().size(); index++) {
-			if ((getApogeuList().get(index).date.getYear() + 1900) == calendar
-					.get(Calendar.YEAR)
-					&& getApogeuList().get(index).date.getMonth() == calendar
-							.get(Calendar.MONTH)
-					&& getApogeuList().get(index).date.getDate() == calendar
-							.get(Calendar.DAY_OF_MONTH)) {
-
-				return "Apogee";
-			}
-			// System.out.println(getApogeuList().get(index).getData());
-		}
-
-		// System.out.println("PERIGEU "+calendar.getTime());
-		for (int index = 0; index < getPerigeuList().size(); index++) {
-			if ((getPerigeuList().get(index).date.getYear() + 1900) == calendar
-					.get(Calendar.YEAR)
-					&& getPerigeuList().get(index).date.getMonth() == calendar
-							.get(Calendar.MONTH)
-					&& getPerigeuList().get(index).date.getDate() == calendar
-							.get(Calendar.DAY_OF_MONTH)) {
-				return "Perigee";
-			}
-			// System.out.println(getPerigeuList().get(index).getData());
-		}
-		return "";
-	}
-
-	public PerigeeApogeeCalculator(Calculator cal, GpsCoordinate gps, Calendar calendar) {
-		calculationPerigeeApogee(cal, gps, calendar);
+	
+	public PerigeeApogeeCalculator(Calendar calendar) {
+		calculationPerigeeApogee(calendar);
 	}
 
 	/**
@@ -103,8 +67,8 @@ public class PerigeeApogeeCalculator {
 	 * @param td Julian Date Number to Date
 	 * @return Double[] Array Double {YEAR, MONTH, DAY}
 	 */
-	public Double[] julianYear(Double td) {
-		Double z, f, a, alpha, b, c, d, e, mm;
+	public int[] julianYear(Double td) {
+		Double z, f, a, alpha, c, b, d, e, mm;
 
 		td += 0.5;
 		z = Math.floor(td);
@@ -126,8 +90,8 @@ public class PerigeeApogeeCalculator {
 		// System.out.println( Math.floor((mm > 2) ? (c - 4716) : (c - 4715))
 		// +"/"+mm+"/"+Math.floor(b - d - Math.floor(30.6001 * e) + f) );
 
-		return new Double[] { Math.floor((mm > 2) ? (c - 4716) : (c - 4715)),
-				mm, Math.floor(b - d - Math.floor(30.6001 * e) + f) };
+		return new int[] { (int) Math.floor((mm > 2) ? (c - 4716) : (c - 4715)),
+				mm.intValue(), (int) Math.floor(b - d - Math.floor(30.6001 * e) + f) };
 	}
 
 	/**
@@ -137,13 +101,13 @@ public class PerigeeApogeeCalculator {
 	 * @param jd Julian Date Number 
 	 * @return Double[] Array Double {HOUR, MINUTE, SECOND}
 	 */
-	public Double[] julianTimeToHourMinuteSecond(Double jd) {
+	public int[] julianTimeToHourMinuteSecond(Double jd) {
 		Double ij;
 
 		jd += 0.5; /* Astronomical to civil */
 		ij = (jd - Math.floor(jd)) * 86400.0;
-		return new Double[] { Math.floor(ij / 3600),
-				Math.floor((ij / 60) % 60), Math.floor(ij % 60) };
+		return new int[] { (int) Math.floor(ij / 3600),
+				(int) Math.floor((ij / 60) % 60), (int) Math.floor(ij % 60) };
 	}
 
 	/**
@@ -340,148 +304,20 @@ public class PerigeeApogeeCalculator {
 	}
 
 	/**
-	 * String to a given length with a given fill character.
-	 */
-	public final static String[] Months = new String[] { "Jan", "Feb", "Mar",
-			"Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-
-	Double[] date = new Double[3];
-	Double[] time = new Double[3];
-
-	MoonEvent lua;
-	/**
 	 * Julian Date Numer to Date
-	 * @param j Julian Date Number
+	 * @param jd Julian Date Number
 	 */
-	public void eDate(Double j) {
+	public Date eDate(Double jd) {
 
-		j += (30.0 / (24 * 60 * 60)); // Round to nearest minute
-		date = julianYear(j);
-		time = julianTimeToHourMinuteSecond(j);
+		jd += (30.0 / (24 * 60 * 60)); // Round to nearest minute
+		date = julianYear(jd);
+		time = julianTimeToHourMinuteSecond(jd);
 		// System.out.println(date[0].intValue()-1900+"/"+(date[1].intValue()-1)+" /"+date[2].intValue()
 		// + " "+ time[0].intValue() + "h"+ time[1].intValue() + "m ");
-		lua.date = new Date(date[0].intValue() - 1900, date[1].intValue() - 1,
-				date[2].intValue(), time[0].intValue(), time[1].intValue());
+		return new Date(date[0] - 1900, date[1] - 1,
+				date[2], time[0], time[1]);
 	}
-
 	
-	private Double degreesSin(Double x) {
-		return Math.sin(degreesToRadians(x));
-	}
-
-	private Double degreesCos(Double x) {
-		return Math.cos(degreesToRadians(x));
-	}
-	/**
-	 * Given a K value used to determine the mean phase of the new
-	 * moon, and a phase selector (0.0, 0.25, 0.5, 0.75), obtain the true,
-	 * corrected phase time.
-	 * @param k value Julian Date Number
-	 * @param phase Double value
-	 * @return Double truePhase value
-	 */
-	public Double truePhase(Double k, Double phase) {
-		Double t, t2, t3, pt, m, mprime, f, SynMonth = 29.53058868; /*
-																	 * Synodic
-																	 * month
-																	 * (mean
-																	 * time from
-																	 * new to
-																	 * next new
-																	 * Moon)
-																	 */
-
-		k += phase; /* Add phase to new moon time */
-		t = k / 1236.85; /*
-						 * Time in Julian centuries from 1900 January 0.5
-						 */
-		t2 = t * t; /* Square for frequent use */
-		t3 = t2 * t; /* Cube for frequent use */
-		pt = 2415020.75933 /* Mean time of phase */
-				+ SynMonth * k + 0.0001178 * t2 - 0.000000155 * t3 + 0.00033
-				* degreesSin(166.56 + 132.87 * t - 0.009173 * t2);
-
-		m = 359.2242 /* Sun's mean anomaly */
-				+ 29.10535608 * k - 0.0000333 * t2 - 0.00000347 * t3;
-		mprime = 306.0253 /* Moon's mean anomaly */
-				+ 385.81691806 * k + 0.0107306 * t2 + 0.00001236 * t3;
-		f = 21.2964 /* Moon's argument of latitude */
-				+ 390.67050646 * k - 0.0016528 * t2 - 0.00000239 * t3;
-		if ((phase < 0.01) || (Math.abs(phase - 0.5) < 0.01)) {
-
-			/* Corrections for New and Full Moon */
-
-			pt += (0.1734 - 0.000393 * t) * degreesSin(m) + 0.0021
-					* degreesSin(2 * m) - 0.4068 * degreesSin(mprime) + 0.0161
-					* degreesSin(2 * mprime) - 0.0004 * degreesSin(3 * mprime)
-					+ 0.0104 * degreesSin(2 * f) - 0.0051
-					* degreesSin(m + mprime) - 0.0074 * degreesSin(m - mprime)
-					+ 0.0004 * degreesSin(2 * f + m) - 0.0004
-					* degreesSin(2 * f - m) - 0.0006
-					* degreesSin(2 * f + mprime) + 0.0010
-					* degreesSin(2 * f - mprime) + 0.0005
-					* degreesSin(m + 2 * mprime);
-		} else if ((Math.abs(phase - 0.25) < 0.01 || (Math.abs(phase - 0.75) < 0.01))) {
-			pt += (0.1721 - 0.0004 * t) * degreesSin(m) + 0.0021
-					* degreesSin(2 * m) - 0.6280 * degreesSin(mprime) + 0.0089
-					* degreesSin(2 * mprime) - 0.0004 * degreesSin(3 * mprime)
-					+ 0.0079 * degreesSin(2 * f) - 0.0119
-					* degreesSin(m + mprime) - 0.0047 * degreesSin(m - mprime)
-					+ 0.0003 * degreesSin(2 * f + m) - 0.0004
-					* degreesSin(2 * f - m) - 0.0006
-					* degreesSin(2 * f + mprime) + 0.0021
-					* degreesSin(2 * f - mprime) + 0.0003
-					* degreesSin(m + 2 * mprime) + 0.0004
-					* degreesSin(m - 2 * mprime) - 0.0003
-					* degreesSin(2 * m + mprime);
-			if (phase < 0.5)
-				/* First quarter correction */
-				pt += 0.0028 - 0.0004 * degreesCos(m) + 0.0003
-						* degreesCos(mprime);
-			else
-				/* Last quarter correction */
-				pt += -0.0028 + 0.0004 * degreesCos(m) - 0.0003
-						* degreesCos(mprime);
-		}
-		return pt;
-	}
-	/**
-	 * Estimated Phase
-	 * 
-	 * @param jd Julian Date Number
-	 * @param phaset Array List
-	 * @return String value
-	 */
-	private String nearPhase(Double jd, ArrayList<Double> phaset) {
-		int i, closest = 0;
-		Double dt = Double.MAX_VALUE;
-		String rs = "";
-
-		for (i = 0; i < phaset.size(); i++) {
-			if (Math.abs(jd - Math.abs(phaset.get(i))) < dt) {
-				dt = Math.abs(jd - Math.abs(phaset.get(i)));
-				closest = i;
-			}
-		}
-		rs = (phaset.get(closest) < 0) ? "N" : "F";
-		rs += (jd > Math.abs(phaset.get(closest))) ? "+" : "-";
-		lua.phase = (rs);
-		if (dt >= 1) {
-			// lua.setDiaProxLua(dt.intValue());
-			rs += Math.floor(dt) + "d";
-			dt -= Math.floor(dt);
-		} else {
-			rs += "  ";
-		}
-		dt = Math.floor((dt * 86400) / 3600);
-		if (dt < 10) {
-			rs += " ";
-		}
-		// lua.setHoraProxLua(dt.intValue());
-		rs += dt + "h";
-		return rs;
-	}
-
 	/**
 	 * Generate Perigee and Apogee Times
 	 * @param calc Calculator
@@ -490,42 +326,30 @@ public class PerigeeApogeeCalculator {
 	 * @return Double value
 	 */
 
-	public Double calculationPerigeeApogee(Calculator calc, GpsCoordinate gps,
-			Calendar calendar) {
-		apogeeList = new ArrayList<MoonEvent>();
-		perigeeList = new ArrayList<MoonEvent>();
-		double utcToLocal = 0d;
-		double timeZoneShift;
-		double daysFromEpoc = 0d;
-		double LST = 0d;
-		int l, m = 0, minx, year = calendar.get(Calendar.YEAR); //
+	public void calculationPerigeeApogee(Calendar calendar) {
+		apogeeList = new ArrayList<Date>();
+		perigeeList = new ArrayList<Date>();
+		int l, m = 0, year = calendar.get(Calendar.YEAR); //
 		ArrayList<Double[]> evt;
 		Double[] dat, kr;
-		ArrayList<Double> phaset;
-		Double pmin = Double.MAX_VALUE;
-		Double pmax = Double.MIN_VALUE;
-		Double sk, k1, mtime;
+		Double sk;
 
-		Position moonToday = calc.calculateMoonPosition(daysFromEpoc);
-		Position moonTomorrow = calc.calculateMoonPosition(daysFromEpoc + 1);
+		Position moonToday;
+		Position moonTomorrow;
 
 		sk = Math.floor((year - 1999.97) * 13.2555);
 		dat = new Double[31];
 		evt = new ArrayList<Double[]>();
-		phaset = new ArrayList<Double>();
 
 		// Tabulate perigees and apogees for the year
 
 		for (l = 0; true; l++) {
+			
 			kr = moonPerigeeApogee(sk);
 			date = julianYear(kr[0]);
 
 			if (date[0] == year) {
-				if (kr[2] < pmin) {
-					pmin = kr[2];
-				} else if (kr[2] > pmax) {
-					pmax = kr[2];
-				}
+				
 				dat[m] = sk;
 				evt.add(kr);
 				m++;
@@ -535,154 +359,18 @@ public class PerigeeApogeeCalculator {
 			}
 			sk += 0.5;
 		}
-
-		// Tabulate new and full moons surrounding the year
-
-		k1 = Math.floor((year - 1900) * 12.3685);
-		minx = 0;
-		for (l = 0; true; l++) {
-			mtime = truePhase(k1, (l & 1) * 0.5);
-
-			date = julianYear(mtime);
-			if (date[0] >= year) {
-				minx++;
-			}
-			phaset.add(mtime * ((l & 1) == 0 ? -1 : 1));
-			if (date[0] > year) {
-				break;
-			}
-			k1 += l & 1;
-		}
 		// Generate perigee and apogee table
 		for (l = 0; l < m; l++) {
 
 			sk = dat[l];
 			kr = evt.get(l);
-			utcToLocal = calc.calculateUtcToDSTLocal(calendar);
-			timeZoneShift = -1 * utcToLocal / calc.HOURS_IN_DAY;
-			daysFromEpoc = ((kr[0].intValue() - 1) - calc.NEW_STANDARD_EPOC) + 0.5;
-			daysFromEpoc = daysFromEpoc + timeZoneShift;
-			LST = calc.calculateLST(daysFromEpoc, timeZoneShift, gps.longitude);
-			// calculate today moon
-
-			moonToday = calc.calculateMoonPosition(daysFromEpoc);
-			moonTomorrow = calc.calculateMoonPosition(daysFromEpoc + 1);
-
-			moonTomorrow = calc.ensureSecondAscentionGreater(moonToday,
-					moonTomorrow);
-			lua = new MoonEvent(calc.calculate(calc.MOONRISE_MOONSET_OFFSET,
-					gps, LST, moonToday, moonTomorrow));
-
-			lua.ageInDays = calc.calculateMoonsAge(kr[0]);
-			lua.illuminationPercent = calc
-					.calculateMoonIlluminationPercent(lua.ageInDays);
-			lua.position = moonToday;
-			lua.zodiac = calc.zodiac(lua.position.longitudeEcliptic);
-			nearPhase(kr[0], phaset);
-
-			eDate(kr[0]);
-			// System.out.println(moonToday.date +" " +daysFromEpoc +
-			// " "+Math.floor(kr[0]-1));
-			lua.position.distance = kr[2];
+	
+			
 			if (l % 2 == 0)
-				addApogeu(lua);
+				getApogeeList().add(eDate(kr[0]));
 			else
-				addPerieu(lua);
+				getPerigeeList().add(eDate(kr[0]));
 
 		}
-		// Generate Moon phase table
-		for (l = 0; l < minx; l++) {
-			Double mp = phaset.get(l);
-			if (mp < 0) {
-				mp = -mp;
-			}
-			eDate(mp);
-		}
-		return mtime;
-	}
-
-	/**
-	 * Convert degrees to a valid angle:
-	 * @param deg Degrees value
-	 * @return double value
-	 */
-	double angle(double deg) {
-		while (deg >= 360.)
-			deg -= 360.;
-		while (deg < 0.)
-			deg += 360.;
-		return deg * DEG2RAD;
-	}
-
-	 /**
-	  * Phase Angle
-	  * @param date Date
-	  * @return double value, the phase angle for the given date, in RADIANS.
-	  */
-	 
-	public double getPhaseAngle(Date date) {
-		if (date == null) {
-			date = new Date();
-		}
-
-		// Time measured in Julian centuries from epoch J2000.0:
-		Date Tepoch = new Date(2000, 0, 1);
-		Tepoch.setTime(getTime(Tepoch.getTime()));
-		double T = (decimalYears(date) - decimalYears(Tepoch)) / 100.;
-		double T2 = T * T;
-		double T3 = T2 * T;
-		double T4 = T3 * T;
-
-		// Mean elongation of the moon:
-		double D = angle(297.8502042 + 445267.1115168 * T - 0.0016300 * T2 + T3
-				/ 545868 + T4 / 113065000);
-		// Sun's mean anomaly:
-		double M = angle(357.5291092 + 35999.0502909 * T - 0.0001536 * T2 + T3
-				/ 24490000);
-		// Moon's mean anomaly:
-		double Mprime = angle(134.9634114 + 477198.8676313 * T + 0.0089970 * T2
-				- T3 / 3536000 + T4 / 14712000);
-
-		return (angle(180 - (D / DEG2RAD) - 6.289 * Math.sin(Mprime) + 2.100
-				* Math.sin(M) - 1.274 * Math.sin(2 * D - Mprime) - 0.658
-				* Math.sin(2 * D) - 0.214 * Math.sin(2 * Mprime) - 0.110
-				* Math.sin(D)));
-	}
-	/**
-	 * Date to Decimal Years
-	 * @param date Date
-	 * @return double decimal Years
-	 */
-	public double decimalYears(Date date) {
-		// getTime() returns milliseconds Math.since Jan 1, 1970, so:
-		return date.getTime() / 365.242191 / (24 * 60 * 60 * 1000);
-	}
-	/**
-	 * Update long time
-	 * @param time Long value
-	 * @return time Long value
-	 */
-	public Long getTime(Long time) {
-
-		// see if the day is decimal:
-
-		String decimal = ".5";
-		float correction = Float.valueOf(decimal).floatValue() * 24 * 60 * 60
-				* 1000;
-
-		// This is so stupid -- Date has a ctor to set itself
-		// from a string, but has no way of setting itself
-		// from a string after construction! Sigh.
-		Date stupid;
-		try {
-			stupid = new Date();
-			stupid.setTime(time);
-		} catch (java.lang.IllegalArgumentException e) {
-			stupid = new Date();
-		}
-
-		// Now add the appropriate decimal days:
-		return stupid.getTime() + (long) correction;
-
 	}
 }

@@ -31,8 +31,8 @@ public class AppTeste {
 		// current date	
 		Calendar calendar = Calendar.getInstance();
 //		calendar.set(Calendar.YEAR, 2015);
-//		calendar.set(Calendar.MONTH, 0);
-//		calendar.set(Calendar.DAY_OF_MONTH, 9);
+//		calendar.set(Calendar.MONTH, 1);
+//		calendar.set(Calendar.DAY_OF_MONTH, 19);
 		
 		System.out.printf("**Calculations for %s****\n", calendar.getTime());
 		
