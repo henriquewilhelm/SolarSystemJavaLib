@@ -1,6 +1,5 @@
 package br.com.henriquewilhelm.orbit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.lang.Math;
 
 /**
@@ -42,11 +41,15 @@ public class OrbitCalculator {
 	private double DEGS = (180 / Math.PI); // convert radians to degrees
 	private double RADS = (Math.PI / 180); // convert degrees to radians
 	private double EPS = 1.0E-12; // machine error constant
+	private final int CENTURIES = 36525;
 
-	/**
-	 * Current time
-	 */
-	private Calendar calendar;
+	public ArrayList<Event> getPlanetList() {
+		return planetList;
+	}
+
+	public void setPlanetList(ArrayList<Event> planetList) {
+		this.planetList = planetList;
+	}	
 	/**
 	 * Name of elements os system solar 
 	 * <p>"Mercury", "Venus  ", "Earth", "Mars",
@@ -56,67 +59,29 @@ public class OrbitCalculator {
 									"Jupiter", "Saturn ", "Uranus ", "Neptune", "Pluto" };
 
 	/**
-	 * Total of day in one CENTURIE
-	 */
-	private final int CENTURIES = 36525;
-	/**
 	 * Construtor Orbit Calculator
 	 */
 	public OrbitCalculator() {
 		this.planetList = new ArrayList<Event>();
-		this.calendar = Calendar.getInstance();
 	}
 
 	/**
 	 * This method computes the position of elements returns (List Of Elements of Solar System)
 	 * @return computeElementsPosition ArrayList
 	 */
-	public ArrayList<Event> computeElementsPosition() {
+	public ArrayList<Event> computeElementsPosition(double dt) {
 
 		Event obj;
 		Event objNext;
-		double dt;
-		// compute day number for date/time (days since J2000)
-		dt = daySinceJ2000(calendar);
 		//System.out.println("Julian Date OF J2000 "+dt);
 		// compute location of objects
 		for (int i = 0; i < 9; i++) {
 			obj = get_coord(i, dt);
 			objNext = get_coord(i, dt+1);//+1 == Tomorrow
-			obj.positionTomorrow = objNext.position;
+			obj.setPositionTomorrow(objNext.getPosition());
 			planetList.add(obj);
 		}
 		return planetList;
-	}
-
-	/**
-	 * Returns the Julian Day as 12h on 1 January 2000
-	 * @param calendar calendar Instance
-	 * @return double value Julian Date since year 2000
-	 */
-	private double daySinceJ2000(Calendar calendar) {
-		
-		this.calendar = calendar;
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minute = calendar.get(Calendar.MINUTE);
-		int second = calendar.get(Calendar.SECOND);
-		//System.out.println("UTC: " + month + "/" + day + "/" + year + "  " + hour + ":" + minute + ":" + second);
-
-		if ((month == 1) || (month == 2)) {
-			year = year - 1;
-			month = month + 12;
-		}
-
-		double a = Math.floor(year / 100);
-		double b = (2 - a + Math.floor(a / 4));
-		double c = Math.floor(365.25 * year);
-		double d = Math.floor(30.6001 * (month + 1)); // +1
-
-		// days since J2000.0
-		return (b + c + d - 730550.5 + day + (hour + minute / 60.0 + second / 3600.0) / 24.0);
 	}
 
 	/**
@@ -129,23 +94,23 @@ public class OrbitCalculator {
 	private Event get_coord(int element, double dateTime) {
 		Event obj = new Event();
 		Coordinates coordObj = new Coordinates();
-		obj.name = name[element];
+		obj.setName(name[element]);
 		mean_elements(coordObj, element, dateTime);
-		double ap = coordObj.a;
-		double ep = coordObj.e;
-		double ip = coordObj.i;
-		double op = coordObj.O;
-		double pp = coordObj.w;
-		double lp = coordObj.L;
+		double ap = coordObj.getA();
+		double ep = coordObj.getE();
+		double ip = coordObj.getI();
+		double op = coordObj.getO();
+		double pp = coordObj.getW();
+		double lp = coordObj.getL();
 
 		Coordinates coordEarth = new Coordinates();
 		mean_elements(coordEarth, 2, dateTime);
-		double ae = coordEarth.a;
-		double ee = coordEarth.e;
-		//double ie = coordEarth.i;
-		//double oe = coordEarth.O;
-		double pe = coordEarth.w;
-		double le = coordEarth.L;
+		double ae = coordEarth.getA();
+		double ee = coordEarth.getE();
+		//double ie = coordEarth.getI();
+		//double oe = coordEarth.getO();
+		double pe = coordEarth.getW();
+		double le = coordEarth.getL();
 
 		 // position of Earth in its orbit
 	    double me = mod2pi(le - pe);
@@ -159,7 +124,7 @@ public class OrbitCalculator {
 	    
 	    // position of planet in its orbit
 	    double mp = mod2pi(lp - pp);
-	    double vp = true_anomaly(mp, coordObj.e);
+	    double vp = true_anomaly(mp, coordObj.getE());
 	    double rp = ap*(1 - ep*ep)/(1 + ep*Math.cos(vp));
 	    
 	    // heliocentric rectangular coordinates of planet
@@ -191,7 +156,7 @@ public class OrbitCalculator {
 	    double distance = Math.sqrt(xeq*xeq + yeq*yeq + zeq*zeq);
 	    double longitudeEcliptic =rightAscention*DEGS;
 	    
-	    obj.position = new Position(rightAscention, declination, longitudeEcliptic, distance);
+	    obj.setPosition(new Position(rightAscention, declination, longitudeEcliptic, distance));
 		return obj;
 	}
 
@@ -204,81 +169,81 @@ public class OrbitCalculator {
 	 * @param dateTime value of current dateTime since 2000
 	 */
 	private void mean_elements(Coordinates coords, int element, double dateTime) {
-		double cy = dateTime / CENTURIES; // centuries since J2000
+		 double cy = dateTime / CENTURIES; // centuries since J2000
 
 		 switch (element)
 		    {
 		    case 0: // Mercury
-		        coords.a = 0.38709893 + 0.00000066*cy;
-		        coords.e = 0.20563069 + 0.00002527*cy;
-		        coords.i = ( 7.00487  -  23.51*cy/3600)*RADS;
-		        coords.O = (48.33167  - 446.30*cy/3600)*RADS;
-		        coords.w = (77.45645  + 573.57*cy/3600)*RADS;
-		        coords.L = mod2pi((252.25084 + 538101628.29*cy/3600)*RADS);
+		        coords.setA(0.38709893 + 0.00000066*cy);
+		        coords.setE(0.20563069 + 0.00002527*cy);
+		        coords.setI((7.00487  -  23.51*cy/3600)*RADS);
+		        coords.setO((48.33167  - 446.30*cy/3600)*RADS);
+		        coords.setW((77.45645  + 573.57*cy/3600)*RADS);
+		        coords.setL(mod2pi((252.25084 + 538101628.29*cy/3600)*RADS));
 		        break;
 		    case 1: // Venus
-		        coords.a = 0.72333199 + 0.00000092*cy;
-		        coords.e = 0.00677323 - 0.00004938*cy;
-		        coords.i = (  3.39471 -   2.86*cy/3600)*RADS;
-		        coords.O = ( 76.68069 - 996.89*cy/3600)*RADS;
-		        coords.w = (131.53298 - 108.80*cy/3600)*RADS;
-		        coords.L = mod2pi((181.97973 + 210664136.06*cy/3600)*RADS);
+		        coords.setA(0.72333199 + 0.00000092*cy);
+		        coords.setE(0.00677323 - 0.00004938*cy);
+		        coords.setI((3.39471 -   2.86*cy/3600)*RADS);
+		        coords.setO(( 76.68069 - 996.89*cy/3600)*RADS);
+		        coords.setW((131.53298 - 108.80*cy/3600)*RADS);
+		        coords.setL(mod2pi((181.97973 + 210664136.06*cy/3600)*RADS));
 		        break;
 		    case 2: // Earth/Sun
-		        coords.a = 1.00000011 - 0.00000005*cy;
-		        coords.e = 0.01671022 - 0.00003804*cy;
-		        coords.i = (  0.00005 -    46.94*cy/3600)*RADS;
-		        coords.O = (-11.26064 - 18228.25*cy/3600)*RADS;
-		        coords.w = (102.94719 +  1198.28*cy/3600)*RADS;
-		        coords.L = mod2pi((100.46435 + 129597740.63*cy/3600)*RADS);
+		        coords.setA(1.00000011 - 0.00000005*cy);
+		        coords.setE(0.01671022 - 0.00003804*cy);
+		        coords.setI((0.00005 -    46.94*cy/3600)*RADS);
+		        coords.setO((-11.26064 - 18228.25*cy/3600)*RADS);
+		        coords.setW((102.94719 +  1198.28*cy/3600)*RADS);
+		        coords.setL(mod2pi((100.46435 + 129597740.63*cy/3600)*RADS));
 		        break;
 		    case 3: // Mars
-		        coords.a = 1.52366231 - 0.00007221*cy;
-		        coords.e = 0.09341233 + 0.00011902*cy;
-		        coords.i = (  1.85061 -   25.47*cy/3600)*RADS;
-		        coords.O = ( 49.57854 - 1020.19*cy/3600)*RADS;
-		        coords.w = (336.04084 + 1560.78*cy/3600)*RADS;
-		        coords.L = mod2pi((355.45332 + 68905103.78*cy/3600)*RADS);
+		        coords.setA(1.52366231 - 0.00007221*cy);
+		        coords.setE(0.09341233 + 0.00011902*cy);
+		        coords.setI((1.85061 -   25.47*cy/3600)*RADS);
+		        coords.setO(( 49.57854 - 1020.19*cy/3600)*RADS);
+		        coords.setW((336.04084 + 1560.78*cy/3600)*RADS);
+		        coords.setL(mod2pi((355.45332 + 68905103.78*cy/3600)*RADS));
 		        break;
 		    case 4: // Jupiter
-		        coords.a = 5.20336301 + 0.00060737*cy;
-		        coords.e = 0.04839266 - 0.00012880*cy;
-		        coords.i = (  1.30530 -    4.15*cy/3600)*RADS;
-		        coords.O = (100.55615 + 1217.17*cy/3600)*RADS;
-		        coords.w = ( 14.75385 +  839.93*cy/3600)*RADS;
-		        coords.L = mod2pi((34.40438 + 10925078.35*cy/3600)*RADS);
+		        coords.setA(5.20336301 + 0.00060737*cy);
+		        coords.setE(0.04839266 - 0.00012880*cy);
+		        coords.setI((1.30530 -    4.15*cy/3600)*RADS);
+		        coords.setO((100.55615 + 1217.17*cy/3600)*RADS);
+		        coords.setW(( 14.75385 +  839.93*cy/3600)*RADS);
+		        coords.setL(mod2pi((34.40438 + 10925078.35*cy/3600)*RADS));
 		        break;
 		    case 5: // Saturn
-		        coords.a = 9.53707032 - 0.00301530*cy;
-		        coords.e = 0.05415060 - 0.00036762*cy;
-		        coords.i = (  2.48446 +    6.11*cy/3600)*RADS;
-		        coords.O = (113.71504 - 1591.05*cy/3600)*RADS;
-		        coords.w = ( 92.43194 - 1948.89*cy/3600)*RADS;
-		        coords.L = mod2pi((49.94432 + 4401052.95*cy/3600)*RADS);
+		        coords.setA(9.53707032 - 0.00301530*cy);
+		        coords.setE(0.05415060 - 0.00036762*cy);
+		        coords.setI((  2.48446 +    6.11*cy/3600)*RADS);
+		        coords.setO((113.71504 - 1591.05*cy/3600)*RADS);
+		        coords.setW(( 92.43194 - 1948.89*cy/3600)*RADS);
+		        coords.setL(mod2pi((49.94432 + 4401052.95*cy/3600)*RADS));
 		        break;
 		    case 6: // Uranus
-		        coords.a = 19.19126393 + 0.00152025*cy;
-		        coords.e =  0.04716771 - 0.00019150*cy;
-		        coords.i = (  0.76986  -    2.09*cy/3600)*RADS;
-		        coords.O = ( 74.22988  - 1681.40*cy/3600)*RADS;
-		        coords.w = (170.96424  + 1312.56*cy/3600)*RADS;
-		        coords.L = mod2pi((313.23218 + 1542547.79*cy/3600)*RADS);
+		        coords.setA(19.19126393 + 0.00152025*cy);
+		        coords.setE(0.04716771 - 0.00019150*cy);
+		        coords.setI((  0.76986  -    2.09*cy/3600)*RADS);
+		        coords.setO(( 74.22988  - 1681.40*cy/3600)*RADS);
+		        coords.setW((170.96424  + 1312.56*cy/3600)*RADS);
+		        coords.setL(mod2pi((313.23218 + 1542547.79*cy/3600)*RADS));
 		        break;
 		    case 7: // Neptune
-		        coords.a = 30.06896348 - 0.00125196*cy;
-		        coords.e =  0.00858587 + 0.00002510*cy;
-		        coords.i = (  1.76917  -   3.64*cy/3600)*RADS;
-		        coords.O = (131.72169  - 151.25*cy/3600)*RADS;
-		        coords.w = ( 44.97135  - 844.43*cy/3600)*RADS;
-		        coords.L = mod2pi((304.88003 + 786449.21*cy/3600)*RADS);
+		        coords.setA(30.06896348 - 0.00125196*cy);
+		        coords.setE(0.00858587 + 0.00002510*cy);
+		        coords.setI((  1.76917  -   3.64*cy/3600)*RADS);
+		        coords.setO((131.72169  - 151.25*cy/3600)*RADS);
+		        coords.setW((44.97135  - 844.43*cy/3600)*RADS);
+		        coords.setL(mod2pi((304.88003 + 786449.21*cy/3600)*RADS));
 		        break;
 		    case 8: // Pluto
-		        coords.a = 39.48168677 - 0.00076912*cy;
-		        coords.e =  0.24880766 + 0.00006465*cy;
-		        coords.i = ( 17.14175  +  11.07*cy/3600)*RADS;
-		        coords.O = (110.30347  -  37.33*cy/3600)*RADS;
-		        coords.w = (224.06676  - 132.25*cy/3600)*RADS;
-		        coords.L = mod2pi((238.92881 + 522747.90*cy/3600)*RADS);
+		        coords.setA(39.48168677 - 0.00076912*cy);
+		        coords.setE(0.24880766 + 0.00006465*cy);
+		        coords.setI((17.14175  +  11.07*cy/3600)*RADS);
+		        coords.setO((110.30347  -  37.33*cy/3600)*RADS);
+		        coords.setW((224.06676  - 132.25*cy/3600)*RADS);
+		        coords.setL(mod2pi((238.92881 + 522747.90*cy/3600)*RADS));
 		        break;
 		    default:
 			System.out.print("function mean_elements() failed!");
@@ -337,12 +302,4 @@ public class OrbitCalculator {
 			a = (2 * Math.PI) + a;
 		return a;
 	}
-	
-	public ArrayList<Event> getPlanetList() {
-		return planetList;
-	}
-
-	public void setPlanetList(ArrayList<Event> planetList) {
-		this.planetList = planetList;
-	}	
 }

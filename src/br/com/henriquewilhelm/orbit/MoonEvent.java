@@ -1,7 +1,5 @@
 package br.com.henriquewilhelm.orbit;
 
-import java.util.Date;
-
 /**
  * The class extends of Event class, gathers the calculations of Moon
  * The calculations are:
@@ -18,20 +16,45 @@ public class MoonEvent extends Event {
 	/**
 	 * Age in Days (1 to 28)
 	 */
-	public double ageInDays;
+	private double ageInDays;
 	/**
 	 * Percent Illumination of Moon
 	 */
-	public double illuminationPercent;
+	private double illuminationPercent;
 	/**
 	 * String Phase
 	 */
-	public String phase;
+	private String phase;
 	/**
 	 * String Perigee Or Apogee
 	 */
-	public String perigeeOrApogee;
+	private String perigeeOrApogee;
 	
+	//Getters and Setters
+	public double getAgeInDays() {
+		return ageInDays;
+	}
+	public void setAgeInDays(double ageInDays) {
+		this.ageInDays = ageInDays;
+	}
+	public double getIlluminationPercent() {
+		return illuminationPercent;
+	}
+	public void setIlluminationPercent(double illuminationPercent) {
+		this.illuminationPercent = illuminationPercent;
+	}
+	public String getPhase() {
+		return phase;
+	}
+	public void setPhase(String phase) {
+		this.phase = phase;
+	}
+	public String getPerigeeOrApogee() {
+		return perigeeOrApogee;
+	}
+	public void setPerigeeOrApogee(String perigeeOrApogee) {
+		this.perigeeOrApogee = perigeeOrApogee;
+	}
 	/**
 	 * Construtor without Event
 	 */
@@ -41,16 +64,19 @@ public class MoonEvent extends Event {
 	 * @param event Event class
 	 */
 	public MoonEvent(Event event) {
-		this.rise = event.rise;
-		this.set = event.set;
-		this.riseAzimuth = event.riseAzimuth;
-		this.setAzimuth  = event.setAzimuth;
-		this.type = event.type;
-		this.meridianCrossing = event.meridianCrossing;
-		this.antimeridianCrossing = event.antimeridianCrossing;
-		this.risenAmount = event.risenAmount;
-		this.setAmount = event.setAmount;
-		this.position = event.position;
-		this.zodiac = event.zodiac;
+		setRise(event.getRise());
+		setSet(event.getSet());
+		setRiseAzimuth(event.getRiseAzimuth());
+		setSetAzimuth(event.getSetAzimuth());
+		setType(event.getType());
+		setMeridianCrossing(event.getMeridianCrossing());
+		setAntimeridianCrossing(event.getAntimeridianCrossing());
+		setRisenAmount(event.getRisenAmount());
+		setSetAmount(event.getSetAmount());
+		setPosition(event.getPosition());
+		setJulianDate(event.getJulianDate());
+		setDate(event.getDate());
+		setZodiac(event.getZodiac());
+		setName("Moon");
 	}
 }

@@ -19,63 +19,100 @@ import java.util.Date;
  * 
  */
 public class Calculator {
+	//Getters ands Setters
+	public ArrayList<MoonEvent> getApogeeList() {
+			return apogeeList;
+	}
+
+	public void setApogeuList(ArrayList<MoonEvent> apogeuList) {
+			this.apogeeList = apogeuList;
+	}
+
+	public ArrayList<MoonEvent> getPerigeeList() {
+			return perigeeList;
+	}
+
+	public void setPerigeuList(ArrayList<MoonEvent> perigeuList) {
+			this.perigeeList = perigeuList;
+	}
+	/**
+	 * {#value #ERRORCORRECTIONDATE} Correction error in date class
+	 */
+	private static final int ERRORCORRECTIONDATE = 1900;
 	
-	public static final double DATEKNOWN = 2451550.1; // (January 6, 2000)
+	/**
+	 * {@value #NEW_MOON_EPOC}
+	 */
+	private static final double NEW_MOON_EPOC = 2451550.1; // (January 6, 2000)
 	/**
 	 * {@value #DAYS_IN_LUNAR_MONTH}
 	 */
-	public static final double DAYS_IN_LUNAR_MONTH = 29.530588853;
+	private static final double DAYS_IN_LUNAR_MONTH = 29.530588853;
 	/**
 	 * {@value #NEW_STANDARD_EPOC}
 	 */
-	public static final int NEW_STANDARD_EPOC = 2451545; 
+	private static final int NEW_STANDARD_EPOC = 2451545; // (January 1, 2000)
 	/**
 	 * {@value #NUM_DAYS_IN_CENTURY}
 	 */
-	public static final int NUM_DAYS_IN_CENTURY = 36525; // 365 days * 100 years + 25 extra days for leap years
+	private static final int NUM_DAYS_IN_CENTURY = 36525; // 365 days * 100 years + 25 extra days for leap years
 	/**
 	 * {@value #HOURS_IN_DAY}
 	 */
-	public static final int HOURS_IN_DAY = 24;
+	private static final int HOURS_IN_DAY = 24;
 	/**
 	 * {@value #DR}
 	 */
-	public static final double DR = Math.PI/180.0; //degrees to radians constant
+	private static final double DR = Math.PI/180.0; //degrees to radians constant
 	/**
 	 * {@value #K1}
 	 */
-	public static final double K1 = 15.0 * DR * 1.0027379;
+	private static final double K1 = 15.0 * DR * 1.0027379;
 	/**
-	 * Type OFFSET
+	 * Type OFFSET SUNRISE_SUNET_OFFSET
 	 */
-	public static final Offset SUNRISE_SUNET_OFFSET        = new Offset(0    , true);
+	private static final Offset SUNRISE_SUNET_OFFSET        = new Offset(0    , true);
 	/**
-	 * Type OFFSET
+	 * Type OFFSET CIVIL_TWILIGHT_OFFSET
 	 */
-	public static final Offset CIVIL_TWILIGHT_OFFSET       = new Offset(-6   , false);
+	private static final Offset CIVIL_TWILIGHT_OFFSET       = new Offset(-6   , false);
 	/**
-	 * Type OFFSET
+	 * Type OFFSET NAUTICAL_TWILIGHT_OFFSET
 	 */
-	public static final Offset NAUTICAL_TWILIGHT_OFFSET    = new Offset(-12  , false);
+	private static final Offset NAUTICAL_TWILIGHT_OFFSET    = new Offset(-12  , false);
 	/**
-	 * Type OFFSET
+	 * Type OFFSET ASTRONOMICAL_TWILIGHT_OFFSET
 	 */
-	public static final Offset ASTRONOMICAL_TWILIGHT_OFFSET= new Offset(-17.8, false);
+	private static final Offset ASTRONOMICAL_TWILIGHT_OFFSET= new Offset(-17.8, false);
 	/**
-	 * Type OFFSET
+	 * Type OFFSET GOLDEN_HOUR_OFFSET
 	 */
-	public static final Offset GOLDEN_HOUR_OFFSET          = new Offset(10.0 , false);
+	private static final Offset GOLDEN_HOUR_OFFSET          = new Offset(10.0 , false);
 	/**
-	 * Type OFFSET
+	 * Type OFFSET MOONRISE_MOONSET_OFFSET
 	 */
-	public static final Offset MOONRISE_MOONSET_OFFSET     = new Offset(0    , false);
+	private static final Offset MOONRISE_MOONSET_OFFSET     = new Offset(0    , false);
+	
+	/**
+	 * Class responsible for dates of Perigee and Apogee
+	 */
+	private PerigeeApogeeCalculator perigeeApogeeCalculator;
+	/**
+	 * Apogee List
+	 */
+	private ArrayList<MoonEvent> apogeeList;
+	/**
+	 * Perigee List
+	 */
+	private ArrayList<MoonEvent> perigeeList;
+
 	
 	/**
 	 * Account For Atmospheric Refraction
 	 *
 	 * @author zoglmannk v1.0.0
 	 */
-	public static class Offset {
+	private static class Offset {
 		final double fromHorizon; //in degrees
 		final boolean accountForAtmosphericRefraction;
 		/**
@@ -88,77 +125,16 @@ public class Calculator {
 			this.accountForAtmosphericRefraction = accountForAtmosphericRefraction;
 		}
 	}
-	
+	/**
+	 * Construtor of Solar system Calculator 
+	 * @param gps
+	 * @param calendar
+	 */
 	public Calculator(GpsCoordinate gps, Calendar calendar) {
 		perigeeApogeeCalculator = new PerigeeApogeeCalculator(calendar);
 		apogeeList = new ArrayList<MoonEvent>();
 		perigeeList = new ArrayList<MoonEvent>();
 	}
-
-	PerigeeApogeeCalculator perigeeApogeeCalculator;
-	/**
-	 * Current Calendar
-	 */
-	Calendar calendar;
-	/**
-	 * Apogee List
-	 */
-	private ArrayList<MoonEvent> apogeeList;
-	/**
-	 * Perigee List
-	 */
-	private ArrayList<MoonEvent> perigeeList;
-
-	public ArrayList<MoonEvent> getApogeeList() {
-		return apogeeList;
-	}
-
-	public void setApogeuList(ArrayList<MoonEvent> apogeuList) {
-		this.apogeeList = apogeuList;
-	}
-
-	public ArrayList<MoonEvent> getPerigeeList() {
-		return perigeeList;
-	}
-
-	public void setPerigeuList(ArrayList<MoonEvent> perigeuList) {
-		this.perigeeList = perigeuList;
-	}
-	
-	/**
-	 * 
-	 * @param calendar current calendar date
-	 * @return String value "Apogee" or "Perigee"
-	 */
-	public String isApogeuOrPerigeu(MoonEvent moon) {
-		// System.out.println("APOGEU "+calendar.getTime());
-		
-		for (int index = 0; index < perigeeApogeeCalculator.getApogeeList().size(); index++) {
-			if (perigeeApogeeCalculator.getApogeeList().get(index).getYear() == moon.date.getYear()
-					&& perigeeApogeeCalculator.getApogeeList().get(index).getMonth() == moon.date.getMonth()
-					&& perigeeApogeeCalculator.getApogeeList().get(index).getDate() == moon.date.getDate()) {
-				moon.date = perigeeApogeeCalculator.getApogeeList().get(index);
-				getApogeeList().add(moon);
-				return "Apogee";
-			}
-			// System.out.println(getApogeuList().get(index).getData());
-		}
-
-		// System.out.println("PERIGEU "+calendar.getTime());
-		for (int index = 0; index < perigeeApogeeCalculator.getPerigeeList().size(); index++) {
-			if (perigeeApogeeCalculator.getPerigeeList().get(index).getYear() == moon.date.getYear()
-					&& perigeeApogeeCalculator.getPerigeeList().get(index).getMonth() == moon.date.getMonth()
-					&& perigeeApogeeCalculator.getPerigeeList().get(index).getDate() == moon.date.getDate()) {
-				moon.date = perigeeApogeeCalculator.getPerigeeList().get(index);
-				getPerigeeList().add(moon);
-				return "Perigee";
-			}
-			// System.out.println(getPerigeuList().get(index).getData());
-		}
-		return "";
-	}
-	
-	
 
 	/** 
 	 * Calculate Sunset, sunrise and Positions (...)
@@ -171,86 +147,81 @@ public class Calculator {
 			GpsCoordinate gps,  
 			Calendar calendar) {
 		
-double utcToLocal = calculateUtcToDSTLocal(calendar);
-		
-		double timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
 		
 		int julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
-		double daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
-
 		System.out.println("- Julian date: "+julianDate);
-		System.out.println("Julian Date OF J2000 "+daysFromEpoc);
-		double LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.longitude);
-		double nextLST = calculateLST(daysFromEpoc+1, timeZoneShift, gps.longitude);
 		
+		double daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
+		System.out.println("Julian Date OF J2000 "+daysFromEpoc);
+		
+		double utcToLocal = calculateUtcToDSTLocal(calendar);
+		double timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
+		double LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
+		double nextLST = calculateLST(daysFromEpoc+1, timeZoneShift, gps.getLongitude());
 		daysFromEpoc = daysFromEpoc + timeZoneShift;
 		Result ret = new Result();
-		
-//		System.out.println(julianDate);
 		
 		//calculate Sun related times
 		Position sunToday    = calculateSunPosition(daysFromEpoc);		
 		Position sunTomorrow = calculateSunPosition(daysFromEpoc+1);
 		sunTomorrow = ensureSecondAscentionGreater(sunToday, sunTomorrow);
-		ret.sun                  = calculate(SUNRISE_SUNET_OFFSET, gps, LST, sunToday, sunTomorrow);		
-		ret.goldenHour           = calculate(GOLDEN_HOUR_OFFSET, gps, LST, sunToday, sunTomorrow);
-		ret.civilTwilight        = calculate(CIVIL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow);
-		ret.nauticalTwilight     = calculate(NAUTICAL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow);
-		ret.astronomicalTwilight = calculate(ASTRONOMICAL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow);
-		ret.sun.zodiac = zodiac(sunToday.longitudeEcliptic);
-		ret.sun.position = sunToday;
+		ret.setSun(calculate(SUNRISE_SUNET_OFFSET, gps, LST, sunToday, sunTomorrow));		
+		ret.setGoldenHour(calculate(GOLDEN_HOUR_OFFSET, gps, LST, sunToday, sunTomorrow));
+		ret.setCivilTwilight(calculate(CIVIL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow));
+		ret.setNauticalTwilight(calculate(NAUTICAL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow));
+		ret.setAstronomicalTwilight(calculate(ASTRONOMICAL_TWILIGHT_OFFSET, gps, LST, sunToday, sunTomorrow));
+		ret.getSun().setZodiac(zodiac(sunToday.getLongitudeEcliptic()));
+		ret.getSun().setPosition(sunToday);
 		
 		//calculate today moon
 		Position moonToday    = calculateMoonPosition(daysFromEpoc);
 		Position moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
 		moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
-		ret.moonToday = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
-		ret.moonToday.ageInDays = calculateMoonsAge(julianDate+1);
-		ret.moonToday.illuminationPercent = calculateMoonIlluminationPercent(ret.moonToday.ageInDays+1);
-		ret.moonToday.position = moonToday;
-		ret.moonToday.zodiac = zodiac(moonToday.longitudeEcliptic);
-		ret.moonToday.phase = phase(ret.moonToday.ageInDays);
-		ret.moonToday.date = julianDatetoDate((double) julianDate);
-		ret.moonToday.perigeeOrApogee = isApogeuOrPerigeu(ret.moonToday);
-		ret.moonToday.julianDate = julianDate;
+		ret.setMoonToday(new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow)));
+		ret.getMoonToday().setAgeInDays(calculateMoonsAge(julianDate+1));
+		ret.getMoonToday().setIlluminationPercent(calculateMoonIlluminationPercent(ret.getMoonToday().getAgeInDays()+1));
+		ret.getMoonToday().setZodiac(zodiac(moonToday.getLongitudeEcliptic()));
+		ret.getMoonToday().setPhase(phase(ret.getMoonToday().getAgeInDays()));
+		ret.getMoonToday().setDate(julianDatetoDate((double) julianDate));
+		ret.getMoonToday().setPerigeeOrApogee(isApogeuOrPerigeu(ret.getMoonToday()));
+		ret.getMoonToday().setJulianDate(julianDate);
 		//calculate tomorrow moon
 		moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
 		Position moonDayAfter = calculateMoonPosition(daysFromEpoc+2);
 		moonDayAfter = ensureSecondAscentionGreater(moonTomorrow, moonDayAfter);
-		ret.moonTomorrow = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, nextLST, moonTomorrow, moonDayAfter));
-		ret.moonTomorrow.ageInDays = calculateMoonsAge(julianDate+2);
-		ret.moonTomorrow.illuminationPercent = calculateMoonIlluminationPercent(ret.moonTomorrow.ageInDays+1);
-		ret.moonTomorrow.position = moonTomorrow;
-		ret.moonTomorrow.zodiac = zodiac(moonTomorrow.longitudeEcliptic);
-		ret.moonTomorrow.phase = phase(ret.moonTomorrow.ageInDays);
-		ret.moonTomorrow.date = julianDatetoDate((double) julianDate+1);
-		ret.moonTomorrow.perigeeOrApogee = isApogeuOrPerigeu(ret.moonTomorrow);
-		ret.moonTomorrow.julianDate = julianDate;
+		ret.setMoonTomorrow(new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, nextLST, moonTomorrow, moonDayAfter)));
+		ret.getMoonTomorrow().setAgeInDays(calculateMoonsAge(julianDate+2));
+		ret.getMoonTomorrow().setIlluminationPercent(calculateMoonIlluminationPercent(ret.getMoonTomorrow().getAgeInDays()+1));
+		ret.getMoonTomorrow().setZodiac(zodiac(moonTomorrow.getLongitudeEcliptic()));
+		ret.getMoonTomorrow().setPhase(phase(ret.getMoonTomorrow().getAgeInDays()));
+		ret.getMoonTomorrow().setDate(julianDatetoDate((double) julianDate+1));
+		ret.getMoonTomorrow().setPerigeeOrApogee(isApogeuOrPerigeu(ret.getMoonTomorrow()));
+		ret.getMoonTomorrow().setJulianDate(julianDate);
 		
 		ArrayList<ArrayList<MoonEvent>> lunarYear = lunarYear(calendar, gps);
-		ret.lunarYear = lunarYear;	
-		ret.apogeeList = getApogeeList();
-		ret.perigeeList = getPerigeeList();
+		ret.setLunarYear(lunarYear);
+		ret.setApogeeList(getApogeeList());
+		ret.setPerigeeList(getPerigeeList());
 		
 		OrbitCalculator planetCalc = new OrbitCalculator();
 		ArrayList<Event> planetList;
 		ArrayList<Event> list = new ArrayList<Event>();
-		planetList = planetCalc.computeElementsPosition();
+		planetList = planetCalc.computeElementsPosition(daysFromEpoc);
 		
 		for (int i=0; i<planetList.size(); i++){
-			Position planetToday    = planetList.get(i).position;
-			Position planetTomorrow = planetList.get(i).positionTomorrow;
-			planetList.get(i).position = planetToday;
+			Position planetToday    = planetList.get(i).getPosition();
+			Position planetTomorrow = planetList.get(i).getPositionTomorrow();
+			planetList.get(i).setPosition(planetToday);
 			
 			Event aux = calculate(SUNRISE_SUNET_OFFSET, gps, LST, planetToday, planetTomorrow);
 			//Teste NAUTICAL_TWILIGHT_OFFSET
 			
-			aux.name = planetList.get(i).name;
-			aux.position = planetToday;
-			aux.zodiac = zodiac(planetToday.longitudeEcliptic);
+			aux.setName(planetList.get(i).getName());
+			aux.setPosition(planetToday);
+			aux.setZodiac(zodiac(planetToday.getLongitudeEcliptic()));
 			list.add(aux);
 		}
-		ret.planetList = list;
+		ret.setPlanetList(list);
 		return ret; 
 	}
 	
@@ -259,7 +230,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @param calendar instance of calendar
 	 * @return double value of real DST (Date Summer Time)
 	 */
-	public double calculateUtcToDSTLocal(Calendar calendar) {		
+	private double calculateUtcToDSTLocal(Calendar calendar) {		
 		int offset = calendar.get(Calendar.DST_OFFSET);
 		double UTC_TO_DST = calendar.getTimeZone().getRawOffset() / calendar.getTimeZone().getDSTSavings();
 		if (offset>0){
@@ -276,7 +247,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @return age moon Age
 	 */
 	public double calculateMoonsAge(double julianDate) {
-		double temp=(julianDate-DATEKNOWN)/DAYS_IN_LUNAR_MONTH;
+		double temp=(julianDate-NEW_MOON_EPOC)/DAYS_IN_LUNAR_MONTH;
 		double age = temp - ((int) temp);
 		
 		if(age < 0) {
@@ -303,10 +274,10 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @return ensure Position
 	 */
 	public Position ensureSecondAscentionGreater(Position first, Position second ) {
-		if (second.rightAscention < first.rightAscention) {
-			double ascention = second.rightAscention+2*Math.PI;
+		if (second.getRightAscention() < first.getRightAscention()) {
+			double ascention = second.getRightAscention()+2*Math.PI;
 			double longitudeEcliptical = Math.toDegrees(ascention);
-			second = new Position(ascention, second.declination, longitudeEcliptical);
+			second = new Position(ascention, second.getRightAscention(), longitudeEcliptical);
 		}
 		
 		return second;
@@ -322,18 +293,18 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @param tomorrow Position
 	 * @return novo evento Event
 	 */
-	public Event calculate(
+	private Event calculate(
 			Offset offset, 
 			GpsCoordinate gps, 
 			double LST, 
 			Position today,
 			Position tomorrow) {
 		
-		double previousAscention = today.rightAscention;
-		double previousDeclination = today.declination;
+		double previousAscention = today.getRightAscention();
+		double previousDeclination = today.getDeclination();
 		
-		double changeInAscention   = tomorrow.rightAscention - today.rightAscention;
-		double changeInDeclination = tomorrow.declination    - today.declination;
+		double changeInAscention   = tomorrow.getRightAscention() - today.getRightAscention();
+		double changeInDeclination = tomorrow.getDeclination()    - today.getDeclination();
 		
 		double previousV = 0; //arbitrary initial value
 		
@@ -343,8 +314,8 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 		for(int hourOfDay=0; hourOfDay<HOURS_IN_DAY; hourOfDay++) {
 			
 			double fractionOfDay = (hourOfDay+1) / ((double)HOURS_IN_DAY);
-			double asention    = today.rightAscention + fractionOfDay*changeInAscention;
-			double declination = today.declination    + fractionOfDay*changeInDeclination;
+			double asention    = today.getRightAscention() + fractionOfDay*changeInAscention;
+			double declination = today.getDeclination()    + fractionOfDay*changeInDeclination;
 					
 			TestResult intermediateTestResult =  testHourForEvent(
 										   hourOfDay,
@@ -367,9 +338,8 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 			previousDeclination = declination;
 			previousV           = intermediateTestResult.V;
 		}
-		
-		
-		return createEvent(testResult);
+	
+		return createEvent(testResult, today);
 	}
 	
 	/** 
@@ -378,14 +348,15 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @param testResult testResult
 	 * @return novo evento Event 
 	 */
-	public Event createEvent(TestResult testResult) {
+	public Event createEvent(TestResult testResult, Position today) {
 		Event ret = new Event();
 		
-		ret.rise = testResult.rise;
-		ret.set  = testResult.set;
-		ret.riseAzimuth = testResult.riseAzimuth;
-		ret.setAzimuth  = testResult.setAzimuth;
-		ret.type = findTypeOfDay(testResult, testResult.V);
+		ret.setRise(testResult.rise);
+		ret.setSet(testResult.set);
+		ret.setRiseAzimuth(testResult.riseAzimuth);
+		ret.setSetAzimuth(testResult.setAzimuth);
+		ret.setPosition(today);
+		ret.setType(findTypeOfDay(testResult, testResult.V));
 		setRisenAndSetAmounts(ret);
 		setMeridianCrossing(ret);
 		setAntimeridianCrossing(ret);
@@ -422,8 +393,8 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 		//ie the sun slips below the horizon at sunset before you actually see it go below the horizon
 		double zenithDistance = DR * (offset.accountForAtmosphericRefraction ? 90.833 : 90.0); 
 		
-		double S = Math.sin(gps.latitude*DR);
-		double C = Math.cos(gps.latitude*DR);
+		double S = Math.sin(gps.getLatitude()*DR);
+		double C = Math.cos(gps.getLatitude()*DR);
 		double Z = Math.cos(zenithDistance) + offset.fromHorizon*DR;
 		
 		double L0 = LST + hourOfDay*K1;
@@ -487,15 +458,11 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 				if (previousV>0 && V<0) {
 					ret.set = new Time(hour, min);
 					ret.setAzimuth = azimuth;
-				}				
-							
+				}							
 			}
-
-		}
-		
+		}	
 		ret.V = V;
-		return ret;
-		
+		return ret;	
 	}
 	
 	/**
@@ -527,7 +494,6 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 		return val == 0 ? 0 : (val > 0 ? 1 : 0);
 	}
 	
-	
 	/**
 	 * Drops any full revolutions and then converts revolutions to radians 
 	 * @param revolutions revolutions Value
@@ -546,8 +512,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	public Position calculateSunPosition(double daysFromEpoc) {
 		double numCenturiesSince1900 = daysFromEpoc/NUM_DAYS_IN_CENTURY + 1;
 		
-		//   Fundamental arguments 
-		//   (Van Flandern & Pulkkinen, 1979)
+		//   Fundamental arguments  (Van Flandern & Pulkkinen, 1979)
 		double meanLongitudeOfSun = revolutionsToTruncatedRadians(.779072 + .00273790931*daysFromEpoc);
 		double meanAnomalyOfSun   = revolutionsToTruncatedRadians(.993126 + .00273777850*daysFromEpoc);		
 		double meanLongitudeOfMoon           = revolutionsToTruncatedRadians(.606434 + .03660110129*daysFromEpoc);
@@ -595,8 +560,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	public Position calculateMoonPosition(double daysFromEpoc) {
 		double numCenturiesSince1900 = daysFromEpoc/NUM_DAYS_IN_CENTURY + 1;
 		
-		//   Fundamental arguments 
-		//   (Van Flandern & Pulkkinen, 1979)		
+		//   Fundamental arguments (Van Flandern & Pulkkinen, 1979)		
 		double meanLongitudeOfMoon     = revolutionsToTruncatedRadians(.606434 + .03660110129*daysFromEpoc); // 1
 		double meanAnomalyOfMoon       = revolutionsToTruncatedRadians(.374897 + .03629164709*daysFromEpoc); // 2
 		double argumentOfLatitudeOfMoon= revolutionsToTruncatedRadians(.259091 + .03674819520*daysFromEpoc); // 3
@@ -796,14 +760,14 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 		
 		Position position = calculatePosition(meanLongitudeOfMoon, U, V, W);
 		double julianDate  = (daysFromEpoc + NEW_STANDARD_EPOC)-0.5;
-		double age = normalize((julianDate - DATEKNOWN) / DAYS_IN_LUNAR_MONTH);
+		double age = normalize((julianDate - NEW_MOON_EPOC) / DAYS_IN_LUNAR_MONTH);
 		double newAge = age * 2 * Math.PI;// Convert phase to radians
 		// calculate moon's distance anomalistic phase
 		double distance = 2 * Math.PI * normalize((julianDate - 2451562.2) / 27.55454988); //anomalistic month
 		// Set Moon Distance
 		distance = roundToDecimal(60.5 - 3.3 * Math.cos(distance) - 0.6 * 
 							Math.cos(2 * newAge - distance) - 0.5 * Math.cos(2 * newAge));
-		position.distance = distance;
+		position.setDistance(distance);
 		return position;
 	}
 	
@@ -820,14 +784,19 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 		return v;
 	}
 	
-	/*  JYEAR  --  Convert  Julian  date  to  year,  month, day, which are
-    returned as an Array.  */
-	public Date julianDatetoDate(Double td) {
+	/**
+	 *   Convert  Julian  date  to  year,  month, day, which are
+     *returned as an Array.  
+     *
+     * @param jd Double value 
+     * @return Date yyyy/mm/dd
+     */
+	public Date julianDatetoDate(Double jd) {
 			Double z, f, a, alpha, b, c, d, e;
 			
-			td += 0.5;
-			z = Math.floor(td);
-			f = td - z;
+			jd += 0.5;
+			z = Math.floor(jd);
+			f = jd - z;
 			
 			if (z < 2299161.0) {
 			 a = z;
@@ -845,7 +814,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 			int year = (int) Math.floor((month > 2) ? (c - 4716) : (c - 4715));
 			int day = (int) Math.floor(b - d - Math.floor(30.6001 * e) + f);
 	
-			return new Date(year-1900, month-1, day+1);
+			return new Date(year-ERRORCORRECTIONDATE, month-1, day+1);
 }
 	
 	/**
@@ -890,7 +859,7 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 */
 	public double calculateLST(double daysFromEpoc, double timeZoneShift, double longitude) {
 		double L = longitude/360;
-		double ret = daysFromEpoc/36525.0;
+		double ret = daysFromEpoc/NUM_DAYS_IN_CENTURY;
 
 		double S;
 		S = 24110.5 + 8640184.813*ret;
@@ -941,26 +910,26 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	public void setRisenAndSetAmounts(Event event) {		
 		Time midnight = new Time(24,00);
 		
-		switch(event.type) {
+		switch(event.getType()) {
 		case NO_CHANGE_PREVIOUSLY_RISEN:
-			event.risenAmount = new Time(24,0);
-			event.setAmount   = new Time(0,0);
+			event.setRisenAmount(new Time(24,0));
+			event.setSetAmount(new Time(0,0));
 			break;
 		case NO_CHANGE_PREVIOUSLY_SET:
-			event.risenAmount = new Time(0,0);
-			event.setAmount   = new Time(24,0);
+			event.setRisenAmount(new Time(0,0));
+			event.setSetAmount(new Time(24,0));
 			break;
 		case ONLY_SET:
-			event.risenAmount = event.set;
-			event.setAmount = difference(midnight, event.set);
+			event.setRisenAmount(event.getSet());
+			event.setSetAmount(difference(midnight, event.getSet()));
 			break;
 		case ONLY_RISEN:
-			event.risenAmount = difference(midnight, event.rise);
-			event.setAmount   = event.rise;
+			event.setRisenAmount(difference(midnight, event.getRise()));
+			event.setSetAmount(event.getRise());
 			break;
 		default:
-			event.risenAmount = difference(event.set, event.rise);
-			event.setAmount   = difference(event.rise, event.set);
+			event.setRisenAmount(difference(event.getSet(), event.getRise()));
+			event.setSetAmount(difference(event.getRise(), event.getSet()));
 		}
 		
 	}
@@ -972,8 +941,8 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @return Time difference
 	 */
 	public Time difference(Time t1, Time t2) {		
-		int hour = t1.hour - t2.hour;
-		int min = t1.min - t2.min;
+		int hour = t1.getHour() - t2.getHour();
+		int min = t1.getMin() - t2.getMin();
 		
 		if(min < 0) {
 			hour--;
@@ -992,22 +961,22 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @param event Event
 	 */
 	public void setMeridianCrossing(Event event) {
-		switch(event.type) {
+		switch(event.getType()) {
 		case RISEN_AND_SET:
-			Time lengthOfDay = event.risenAmount;
-			int totalMins = (lengthOfDay.hour*60 + lengthOfDay.min)/2;
+			Time lengthOfDay = event.getRisenAmount();
+			int totalMins = (lengthOfDay.getHour()*60 + lengthOfDay.getMin())/2;
 			
-			int hour = event.rise.hour + (totalMins/60);
-			int min  = event.rise.min  + (totalMins%60);
+			int hour = event.getRise().getHour() + (totalMins/60);
+			int min  = event.getRise().getMin()  + (totalMins%60);
 			
 			if(min >= 60) {
 				hour++;
 				min = min - 60;
 			}
-			event.meridianCrossing = new Time(hour, min);
+			event.setMeridianCrossing(new Time(hour, min));
 			break;
 		default:
-			event.meridianCrossing = null;
+			event.setMeridianCrossing(null);
 		}
 	}
 	/**
@@ -1015,13 +984,13 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 	 * @param event Event
 	 */
 	public void setAntimeridianCrossing(Event event) {
-		switch(event.type) {
+		switch(event.getType()) {
 		case RISEN_AND_SET:
-			Time lengthOfNight = event.setAmount;
-			int totalMins = (lengthOfNight.hour*60 + lengthOfNight.min)/2;
+			Time lengthOfNight = event.getSetAmount();
+			int totalMins = (lengthOfNight.getHour()*60 + lengthOfNight.getMin())/2;
 			
-			int hour = event.set.hour + (totalMins/60);
-			int min  = event.set.min  + (totalMins%60);
+			int hour = event.getSet().getHour() + (totalMins/60);
+			int min  = event.getSet().getMin()  + (totalMins%60);
 			
 			if(min >= 60) {
 				hour++;
@@ -1031,10 +1000,10 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 			if(hour >= 24) {
 				hour -= 24;
 			}
-			event.antimeridianCrossing = new Time(hour, min);
+			event.setAntimeridianCrossing(new Time(hour, min));
 			break;
 		default:
-			event.antimeridianCrossing = null;
+			event.setAntimeridianCrossing(null);
 		}
 	}
 	/**
@@ -1068,198 +1037,8 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 			return Event.HorizonToHorizonCrossing.RISEN_AND_SET;
 		}
 	}
-	/**
-	 * Generates and adds the moons of the current Year
-	 * 
-	 * @param calendar Astronomical Calendar
-	 * @param gps GpsCoordinate
-	 * @return ArrayList of lunar year 
-	 */
-	public ArrayList<ArrayList<MoonEvent>> lunarYear(Calendar calendar, GpsCoordinate gps) {
-		double utcToLocal = 0d;
-		double timeZoneShift;
-		int julianDate = 0;//note that the julianDate is truncated
-		double daysFromEpoc = 0d;
-		double LST = 0d;
-		
-		MoonEvent moon = null;
-		
-		ArrayList<MoonEvent> mesLunar = new ArrayList<MoonEvent>();
-		ArrayList<ArrayList<MoonEvent>> lunarYear = new ArrayList<ArrayList<MoonEvent>>();
-		int ano = calendar.get(Calendar.YEAR);
-		int mes = calendar.get(Calendar.MONTH);
-		int dia = calendar.get(Calendar.DAY_OF_MONTH);
 
-		Position moonToday = null;
-		Position moonTomorrow;
-		for (int iMonth = 0; iMonth <= 13; iMonth++) {
-				mesLunar = new ArrayList<MoonEvent>();
-				for (int iDay = 1; iDay <= 31; iDay++) {
-					if (iMonth == 0){
-								if (isDayOfMonth(iDay, 12,ano-1)) {
-										calendar.set(Calendar.YEAR, ano-1);
-										calendar.set(Calendar.MONTH, 11);
-										calendar.set(Calendar.DAY_OF_MONTH, iDay);
-										
-										utcToLocal = calculateUtcToDSTLocal(calendar);
-										timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
-										julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
-										daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
-										LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.longitude);
-										daysFromEpoc = daysFromEpoc + timeZoneShift;
-										//calculate today moon
-										moonToday    = calculateMoonPosition(daysFromEpoc);
-										moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
-														
-										moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
-										moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
-										moon.ageInDays = calculateMoonsAge(julianDate+1);
-										moon.illuminationPercent = calculateMoonIlluminationPercent(moon.ageInDays+1);
-										moon.position = moonToday;
-										moon.zodiac = zodiac(moonToday.longitudeEcliptic);
-										moon.phase = phase(moon.ageInDays);
-										moon.date = calendar.getTime();
-										moon.perigeeOrApogee = isApogeuOrPerigeu(moon);
-										moon.julianDate = julianDate;
-										mesLunar.add(moon);
-								}
-					}
-					if (iMonth >= 1 && iMonth <= 12){
-								if (isDayOfMonth(iDay, iMonth,ano)) {
-									calendar.set(Calendar.YEAR, ano);
-									calendar.set(Calendar.MONTH, iMonth-1);
-									calendar.set(Calendar.DAY_OF_MONTH, iDay);
-									
-									utcToLocal = calculateUtcToDSTLocal(calendar);
-									timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
-									julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
-									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
-									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.longitude);
-									daysFromEpoc = daysFromEpoc + timeZoneShift;
-									//calculate today moon
-									moonToday    = calculateMoonPosition(daysFromEpoc);
-									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
-													
-									moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
-									moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
-									moon.ageInDays = calculateMoonsAge(julianDate+1);
-									moon.illuminationPercent = calculateMoonIlluminationPercent(moon.ageInDays+1);
-									moon.position = moonToday;
-									moon.zodiac = zodiac(moonToday.longitudeEcliptic);
-									moon.phase = phase(moon.ageInDays);
-									moon.date = calendar.getTime();
-									moon.perigeeOrApogee = isApogeuOrPerigeu(moon);
-									moon.julianDate = julianDate;
-									mesLunar.add(moon);
-								}
-					}
-					if (iMonth == 13){
-								if (isDayOfMonth(iDay, 1,ano+1)) {
-									calendar.set(Calendar.YEAR, ano+1);
-									calendar.set(Calendar.MONTH, 0);
-									calendar.set(Calendar.DAY_OF_MONTH, iDay);
-									
-									utcToLocal = calculateUtcToDSTLocal(calendar);
-									timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
-									julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
-									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
-									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.longitude);
-									daysFromEpoc = daysFromEpoc + timeZoneShift;
-									//calculate today moon
-									moonToday    = calculateMoonPosition(daysFromEpoc);
-									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
-													
-									moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
-									moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
-									moon.ageInDays = calculateMoonsAge(julianDate+1);
-									moon.illuminationPercent = calculateMoonIlluminationPercent(moon.ageInDays+1);
-									moon.position = moonToday;
-									moon.zodiac = zodiac(moonToday.longitudeEcliptic);
-									moon.phase = phase(moon.ageInDays);
-									moon.date = calendar.getTime();
-									moon.perigeeOrApogee = isApogeuOrPerigeu(moon);
-									moon.julianDate = julianDate;
-									mesLunar.add(moon);
-								}	
-					}	
-//				System.out.println("- Julian date: "+julianDate+ " "+calendar.getTime() + " " + moon.position.date);
-				}
-				lunarYear.add(mesLunar);
-		}		
-		calendar.set(Calendar.YEAR, ano);
-		calendar.set(Calendar.MONTH, mes);
-		calendar.set(Calendar.DAY_OF_MONTH, dia);
-		
-		// TODO Auto-generated method stub
-		return lunarYear;
-	}
 	
-
-	/**
-	 * Check Moon's String Phase
-	 * 
-	 * @param ageInDays Moon Age in Days
-	 * @return String Phase
-	 */
-	public String phase(double ageInDays){
-			String phase;
-			if (ageInDays <  1.84566)
-				phase = "NEW";
-		    else if (ageInDays <  5.53699)
-		    	phase = "Waxing crescent";
-		    else if (ageInDays <  9.22831 )
-		    	phase = "First quarter";
-		    else if (ageInDays < 12.91963 )
-		    	phase = "Waxing minguante";
-		    else if (ageInDays < 16.61096 )
-		    	phase = "FULL";
-		    else if (ageInDays < 20.30228 )
-		    	phase = "Waning gibbous";
-		    else if (ageInDays < 23.99361 )
-		    	phase = "Last quarter";
-		    else if (ageInDays < 27.68493 )
-		    	phase = "Waning crescent";
-		    else                     
-		    	phase = "NEW";
-			return phase;
-	}
-	
-	/**
-	 * Check Moon's Zodiac
-	 * 
-	 * @param longitudeEcliptical Moon 
-	 * @return String zodiac
-	 */
-	public String zodiac(double longitudeEcliptical) {
-		String zodiac;
-		if (longitudeEcliptical < 33.18)
-			zodiac = "Pisces";
-		else if (longitudeEcliptical < 51.16)
-			zodiac = "Aries";
-		else if (longitudeEcliptical < 93.44)
-			zodiac = "Taurus";
-		else if (longitudeEcliptical < 119.48)
-			zodiac = "Gemini";
-		else if (longitudeEcliptical < 135.30)
-			zodiac = "Cancer";
-		else if (longitudeEcliptical< 173.34)
-			zodiac = "Leo";
-		else if (longitudeEcliptical< 224.17)
-			zodiac = "Virgo";
-		else if (longitudeEcliptical < 242.57)
-			zodiac = "Libra";
-		else if (longitudeEcliptical < 271.26)
-			zodiac = "Scorpio";
-		else if (longitudeEcliptical < 302.49)
-			zodiac = "Sagittarius";
-		else if (longitudeEcliptical < 311.72)
-			zodiac = "Capricorn";
-		else if (longitudeEcliptical < 348.58)
-			zodiac = "Aquarius";
-		else
-			zodiac = "Pisces";
-		return zodiac;
-	}
 	
 	/**
 	 *  Check for valid date, if the month hesitate 28 or 29 days in February, and 30 or 31 days (other months)
@@ -1308,5 +1087,258 @@ double utcToLocal = calculateUtcToDSTLocal(calendar);
 
 		return ((0 < day) && (day <= isDayOfMonth));
 	}
+
+	/**
+	 * Check Moon's String Phase
+	 * 
+	 * @param ageInDays Moon Age in Days
+	 * @return String Phase
+	 */
+	public String phase(double ageInDays){
+			String phase;
+			
+			if (ageInDays <  1.84566)
+				phase = "NEW";
+		    else if (ageInDays <  5.53699)
+		    	phase = "Waxing crescent";
+		    else if (ageInDays <  9.22831 )
+		    	phase = "First quarter";
+		    else if (ageInDays < 12.91963 )
+		    	phase = "Waxing minguante";
+		    else if (ageInDays < 16.61096 )
+		    	phase = "FULL";
+		    else if (ageInDays < 20.30228 )
+		    	phase = "Waning gibbous";
+		    else if (ageInDays < 23.99361 )
+		    	phase = "Last quarter";
+		    else if (ageInDays < 27.68493 )
+		    	phase = "Waning crescent";
+		    else                     
+		    	phase = "NEW";
+			return  phase;
+	}
 	
+
+	/**
+	 * Check Moon's Zodiac
+	 * 
+	 * @param longitudeEcliptical Moon 
+	 * @return String zodiac
+	 */
+	public String zodiac(double longitudeEcliptical) {
+		String zodiac;
+		if (longitudeEcliptical < 33.18)
+			zodiac = "Pisces";
+		else if (longitudeEcliptical < 51.16)
+			zodiac = "Aries";
+		else if (longitudeEcliptical < 93.44)
+			zodiac = "Taurus";
+		else if (longitudeEcliptical < 119.48)
+			zodiac = "Gemini";
+		else if (longitudeEcliptical < 135.30)
+			zodiac = "Cancer";
+		else if (longitudeEcliptical< 173.34)
+			zodiac = "Leo";
+		else if (longitudeEcliptical< 224.17)
+			zodiac = "Virgo";
+		else if (longitudeEcliptical < 242.57)
+			zodiac = "Libra";
+		else if (longitudeEcliptical < 271.26)
+			zodiac = "Scorpio";
+		else if (longitudeEcliptical < 302.49)
+			zodiac = "Sagittarius";
+		else if (longitudeEcliptical < 311.72)
+			zodiac = "Capricorn";
+		else if (longitudeEcliptical < 348.58)
+			zodiac = "Aquarius";
+		else
+			zodiac = "Pisces";
+		return zodiac;
+	}
+	
+	/**
+	 * Generates and adds the moons of the current Year
+	 * 
+	 * @param calendar Astronomical Calendar
+	 * @param gps GpsCoordinate
+	 * @return ArrayList of lunar year 
+	 */
+	public ArrayList<ArrayList<MoonEvent>> lunarYear(Calendar calendar, GpsCoordinate gps) {
+		double utcToLocal = 0d;
+		double timeZoneShift;
+		int julianDate = 0;//note that the julianDate is truncated
+		double daysFromEpoc = 0d;
+		double LST = 0d;
+		
+		MoonEvent moon = null;
+		
+		ArrayList<MoonEvent> mesLunar = new ArrayList<MoonEvent>();
+		ArrayList<ArrayList<MoonEvent>> lunarYear = new ArrayList<ArrayList<MoonEvent>>();
+		int ano = calendar.get(Calendar.YEAR);
+		int mes = calendar.get(Calendar.MONTH);
+		int dia = calendar.get(Calendar.DAY_OF_MONTH);
+
+		Position moonToday = null;
+		Position moonTomorrow;
+		for (int iMonth = 0; iMonth <= 13; iMonth++) {
+				mesLunar = new ArrayList<MoonEvent>();
+				for (int iDay = 1; iDay <= 31; iDay++) {
+					if (iMonth == 0){
+								if (isDayOfMonth(iDay, 12,ano-1)) {
+										calendar.set(Calendar.YEAR, ano-1);
+										calendar.set(Calendar.MONTH, 11);
+										calendar.set(Calendar.DAY_OF_MONTH, iDay);
+										
+										utcToLocal = calculateUtcToDSTLocal(calendar);
+										timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
+										julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
+										daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
+										LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
+										daysFromEpoc = daysFromEpoc + timeZoneShift;
+										//calculate today moon
+										moonToday    = calculateMoonPosition(daysFromEpoc);
+										moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
+														
+										moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
+										moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
+										moon.setAgeInDays(calculateMoonsAge(julianDate+1));
+										moon.setIlluminationPercent(calculateMoonIlluminationPercent(moon.getAgeInDays()+1));
+										moon.setZodiac(zodiac(moonToday.getLongitudeEcliptic()));
+										moon.setPhase(phase(moon.getAgeInDays()));
+										moon.setDate(calendar.getTime());
+										moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
+										moon.setJulianDate(julianDate);
+										mesLunar.add(moon);
+								}
+					}
+					if (iMonth >= 1 && iMonth <= 12){
+								if (isDayOfMonth(iDay, iMonth,ano)) {
+									calendar.set(Calendar.YEAR, ano);
+									calendar.set(Calendar.MONTH, iMonth-1);
+									calendar.set(Calendar.DAY_OF_MONTH, iDay);
+									
+									utcToLocal = calculateUtcToDSTLocal(calendar);
+									timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
+									julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
+									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
+									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
+									daysFromEpoc = daysFromEpoc + timeZoneShift;
+									//calculate today moon
+									moonToday    = calculateMoonPosition(daysFromEpoc);
+									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
+													
+									moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
+									moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
+									moon.setAgeInDays(calculateMoonsAge(julianDate+1));
+									moon.setIlluminationPercent(calculateMoonIlluminationPercent(moon.getAgeInDays()+1));
+									moon.setZodiac(zodiac(moonToday.getLongitudeEcliptic()));
+									moon.setPhase(phase(moon.getAgeInDays()));
+									moon.setDate(calendar.getTime());
+									moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
+									moon.setJulianDate(julianDate);
+									mesLunar.add(moon);
+								}
+					}
+					if (iMonth == 13){
+								if (isDayOfMonth(iDay, 1,ano+1)) {
+									calendar.set(Calendar.YEAR, ano+1);
+									calendar.set(Calendar.MONTH, 0);
+									calendar.set(Calendar.DAY_OF_MONTH, iDay);
+									
+									utcToLocal = calculateUtcToDSTLocal(calendar);
+									timeZoneShift = -1  * utcToLocal/HOURS_IN_DAY;
+									julianDate = calculateJulianDate(calendar); //note that the julianDate is truncated
+									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
+									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
+									daysFromEpoc = daysFromEpoc + timeZoneShift;
+									//calculate today moon
+									moonToday    = calculateMoonPosition(daysFromEpoc);
+									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
+													
+									moonTomorrow = ensureSecondAscentionGreater(moonToday, moonTomorrow);		
+									moon = new MoonEvent(calculate(MOONRISE_MOONSET_OFFSET, gps, LST, moonToday, moonTomorrow));
+									moon.setAgeInDays(calculateMoonsAge(julianDate+1));
+									moon.setIlluminationPercent(calculateMoonIlluminationPercent(moon.getAgeInDays()+1));
+									moon.setZodiac(zodiac(moonToday.getLongitudeEcliptic()));
+									moon.setPhase(phase(moon.getAgeInDays()));
+									moon.setDate(calendar.getTime());
+									moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
+									moon.setJulianDate(julianDate);
+									mesLunar.add(moon);
+								}	
+					}	
+//				System.out.println("- Julian date: "+julianDate+ " "+calendar.getTime() + " " + moon.position.date);
+				}
+				lunarYear.add(mesLunar);
+		}
+		// Update to current date time
+		calendar.set(Calendar.YEAR, ano);
+		calendar.set(Calendar.MONTH, mes);
+		calendar.set(Calendar.DAY_OF_MONTH, dia);
+		
+		// TODO Auto-generated method stub
+		return lunarYear;
+	}	
+	
+	/**
+	 * 
+	 * @param calendar current calendar date
+	 * @return String value "Apogee" or "Perigee"
+	 */
+	public String setApogeuAndPerigeu(MoonEvent moon) {
+		// System.out.println("APOGEU "+calendar.getTime());
+		
+		for (int index = 0; index < perigeeApogeeCalculator.getApogeeList().size(); index++) {
+			if (perigeeApogeeCalculator.getApogeeList().get(index).getYear() == moon.getDate().getYear()
+					&& perigeeApogeeCalculator.getApogeeList().get(index).getMonth() == moon.getDate().getMonth()
+					&& perigeeApogeeCalculator.getApogeeList().get(index).getDate() == moon.getDate().getDate()) {
+				moon.setDate(perigeeApogeeCalculator.getApogeeList().get(index));
+				getApogeeList().add(moon);
+				return "Apogee";
+			}
+			// System.out.println(getApogeuList().get(index).getData());
+		}
+
+		// System.out.println("PERIGEU "+calendar.getTime());
+		for (int index = 0; index < perigeeApogeeCalculator.getPerigeeList().size(); index++) {
+			if (perigeeApogeeCalculator.getPerigeeList().get(index).getYear() == moon.getDate().getYear()
+					&& perigeeApogeeCalculator.getPerigeeList().get(index).getMonth() == moon.getDate().getMonth()
+					&& perigeeApogeeCalculator.getPerigeeList().get(index).getDate() == moon.getDate().getDate()) {
+				moon.setDate(perigeeApogeeCalculator.getPerigeeList().get(index));
+				getPerigeeList().add(moon);
+				return "Perigee";
+			}
+			// System.out.println(getPerigeuList().get(index).getData());
+		}
+		return "";
+	}
+	
+	/**
+	 * 
+	 * @param calendar current calendar date
+	 * @return String value "Apogee" or "Perigee"
+	 */
+	public String isApogeuOrPerigeu(MoonEvent moon) {
+		// System.out.println("APOGEU "+calendar.getTime());
+		
+		for (int index = 0; index < perigeeApogeeCalculator.getApogeeList().size(); index++) {
+			if (perigeeApogeeCalculator.getApogeeList().get(index).getYear() == moon.getDate().getYear()
+					&& perigeeApogeeCalculator.getApogeeList().get(index).getMonth() == moon.getDate().getMonth()
+					&& perigeeApogeeCalculator.getApogeeList().get(index).getDate() == moon.getDate().getDate()) {
+				return "Apogee";
+			}
+			// System.out.println(getApogeuList().get(index).getData());
+		}
+
+		// System.out.println("PERIGEU "+calendar.getTime());
+		for (int index = 0; index < perigeeApogeeCalculator.getPerigeeList().size(); index++) {
+			if (perigeeApogeeCalculator.getPerigeeList().get(index).getYear() == moon.getDate().getYear()
+					&& perigeeApogeeCalculator.getPerigeeList().get(index).getMonth() == moon.getDate().getMonth()
+					&& perigeeApogeeCalculator.getPerigeeList().get(index).getDate() == moon.getDate().getDate()) {
+				return "Perigee";
+			}
+			// System.out.println(getPerigeuList().get(index).getData());
+		}
+		return "";
+	}
 }

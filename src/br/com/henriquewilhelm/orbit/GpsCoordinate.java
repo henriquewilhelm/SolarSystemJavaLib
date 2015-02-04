@@ -11,11 +11,19 @@ public class GpsCoordinate {
 	/**
 	 * LATITUDE YOUR LOCATION (North latitudes positive)
 	 */
-	public final double latitude; 
+	private final double latitude; 
 	/**
 	 * LONGITUDE YOUR LOCATION (West longitudes negative)
 	 */
-	public final double longitude;
+	private final double longitude;
+	
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
 
 	/**
 	 * @param latitude   north latitudes positive

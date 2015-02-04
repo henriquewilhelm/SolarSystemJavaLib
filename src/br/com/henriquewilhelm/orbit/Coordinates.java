@@ -8,27 +8,75 @@ public class Coordinates {
 	/**
 	 * Semi-major axis [AU]
 	 */
-	double a;
+	private double a;
 	/** 
 	 * Eccentricity of orbit
 	 */
-	double e; 
+	private double e; 
 	/**
 	 * Inclination of orbit [deg]
 	 */
-	double i; 
+	private double i; 
 	/**
 	 * Longitude of the ascending node [deg]
 	 */
-	double O; 
+	private double O; 
 	/**
 	 * Longitude of perihelion [deg]
 	 */
-	double w; 
+	private double w; 
 	/** 
 	 * Mean longitude [deg]
 	 */
-	double L; 
+	private double L; 
+	
+	public double getA() {
+		return a;
+	}
+
+	public void setA(double a) {
+		this.a = a;
+	}
+
+	public double getE() {
+		return e;
+	}
+
+	public void setE(double e) {
+		this.e = e;
+	}
+
+	public double getI() {
+		return i;
+	}
+
+	public void setI(double i) {
+		this.i = i;
+	}
+
+	public double getO() {
+		return O;
+	}
+
+	public void setO(double o) {
+		O = o;
+	}
+
+	public double getW() {
+		return w;
+	}
+
+	public void setW(double w) {
+		this.w = w;
+	}
+
+	public double getL() {
+		return L;
+	}
+
+	public void setL(double l) {
+		L = l;
+	}
 
 	public String toString() {
 		// TODO Auto-generated method stub

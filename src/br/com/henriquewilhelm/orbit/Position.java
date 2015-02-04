@@ -2,7 +2,6 @@ package br.com.henriquewilhelm.orbit;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
 
 /**
  * The Position class gathers the position of one element of the solar system  
@@ -20,11 +19,37 @@ public class Position {
 	 */
 	private static final double DR = Math.PI/180.0; //degrees to radians constant
 	
-	public double rightAscention;    //in radians
-	public double declination;		 //in radians
-	public double longitudeEcliptic; //in Degree
-	public double distance;
-
+	private double rightAscention;    //in radians
+	private double declination;		 //in radians
+	private double longitudeEcliptic; //in Degree
+	private double distance;
+	
+	// Getters and Setters
+	public double getRightAscention() {
+		return rightAscention;
+	}
+	public void setRightAscention(double rightAscention) {
+		this.rightAscention = rightAscention;
+	}
+	public double getDeclination() {
+		return declination;
+	}
+	public void setDeclination(double declination) {
+		this.declination = declination;
+	}
+	public double getLongitudeEcliptic() {
+		return longitudeEcliptic;
+	}
+	public void setLongitudeEcliptic(double longitudeEcliptic) {
+		this.longitudeEcliptic = longitudeEcliptic;
+	}
+	public double getDistance() {
+		return distance;
+	}
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	
 	/**
 	 * Contrutor with without distance
 	 * @param rightAscention double value

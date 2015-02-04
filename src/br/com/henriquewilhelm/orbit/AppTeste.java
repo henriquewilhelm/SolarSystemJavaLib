@@ -1,8 +1,5 @@
 package br.com.henriquewilhelm.orbit;
-
-import java.util.Date;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * Classe of Test App for current date

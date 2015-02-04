@@ -1,5 +1,4 @@
 package br.com.henriquewilhelm.orbit;
-
 import java.util.Date;
 
 /**
@@ -20,50 +19,171 @@ public class Event {
 	/**
 	 * Name of Element of system solar
 	 */
-	public String name;
+	private String name;
 	/**
 	 * Julian Date Number used in calculations
 	 */
-	public double julianDate;
+	private double julianDate;
 	/**
 	 * Date used in calculations
 	 */
-	public Date date;
+	private Date date;
 	/**
 	 * Element of system solar Rise
 	 */
-	public Time rise;
+	private Time rise;
 	/**
 	 * Element of system solar Set
 	 */
-	public Time set;
+	private Time set;
 	
-	public double riseAzimuth, setAzimuth;
+	private double riseAzimuth, setAzimuth;
 	/**
 	 * Type eNum ( RISEN_AND_SET, NO_CHANGE_PREVIOUSLY_RISEN, NO_CHANGE_PREVIOUSLY_SET, ONLY_SET, ONLY_RISEN)
 	 */
-	public HorizonToHorizonCrossing type;
+	private HorizonToHorizonCrossing type;
 	/**
 	 * Element of system solar meridianCrossing (Noon)
 	 */
-	public Time meridianCrossing;
+	private Time meridianCrossing;
 	/**
 	 * Element of system solar meridianCrossing (Midnigth)
 	 */
-	public Time antimeridianCrossing;
-	public Time risenAmount, setAmount;
+	private Time antimeridianCrossing;
+	private Time risenAmount, setAmount;
 	/**
 	 * currentDate Position
 	 * Position (rightAscention, declination, longitudeEcliptic and distance)
 	 */
-	public Position position;
+	private Position position;
 	/**
 	 * tomorrow Position (currentDate +1)
 	 * Position (rightAscention, declination, longitudeEcliptic and distance)
 	 */
-	public Position positionTomorrow;
+	private Position positionTomorrow;
 	
-	public String zodiac;
+	private String zodiac;
+		
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getJulianDate() {
+		return julianDate;
+	}
+
+	public void setJulianDate(double julianDate) {
+		this.julianDate = julianDate;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Time getRise() {
+		return rise;
+	}
+
+	public void setRise(Time rise) {
+		this.rise = rise;
+	}
+
+	public Time getSet() {
+		return set;
+	}
+
+	public void setSet(Time set) {
+		this.set = set;
+	}
+
+	public double getRiseAzimuth() {
+		return riseAzimuth;
+	}
+
+	public void setRiseAzimuth(double riseAzimuth) {
+		this.riseAzimuth = riseAzimuth;
+	}
+
+	public double getSetAzimuth() {
+		return setAzimuth;
+	}
+
+	public void setSetAzimuth(double setAzimuth) {
+		this.setAzimuth = setAzimuth;
+	}
+
+	public Time getMeridianCrossing() {
+		return meridianCrossing;
+	}
+
+	public void setMeridianCrossing(Time meridianCrossing) {
+		this.meridianCrossing = meridianCrossing;
+	}
+
+	public Time getAntimeridianCrossing() {
+		return antimeridianCrossing;
+	}
+
+	public void setAntimeridianCrossing(Time antimeridianCrossing) {
+		this.antimeridianCrossing = antimeridianCrossing;
+	}
+
+	public Time getRisenAmount() {
+		return risenAmount;
+	}
+
+	public void setRisenAmount(Time risenAmount) {
+		this.risenAmount = risenAmount;
+	}
+
+	public Time getSetAmount() {
+		return setAmount;
+	}
+
+	public void setSetAmount(Time setAmount) {
+		this.setAmount = setAmount;
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+
+	public Position getPositionTomorrow() {
+		return positionTomorrow;
+	}
+
+	public void setPositionTomorrow(Position positionTomorrow) {
+		this.positionTomorrow = positionTomorrow;
+	}
+
+	public String getZodiac() {
+		return zodiac;
+	}
+
+	public void setZodiac(String zodiac) {
+		this.zodiac = zodiac;
+	}
+	
+	public HorizonToHorizonCrossing getType() {
+		return type;
+	}
+
+	public void setType(HorizonToHorizonCrossing type) {
+		this.type = type;
+	}
+
 	/**
 	/**
 	 * Type of Horizon Crossing (NO_CHANGE_PREVIOUSLY_RISEN, NO_CHANGE_PREVIOUSLY_SET, ONLY_RISEN 

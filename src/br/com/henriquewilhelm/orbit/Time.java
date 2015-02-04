@@ -14,9 +14,15 @@ import java.io.StringWriter;
  */
 public class Time {
 	
-	public final int hour;
-	public final int min;
+	private final int hour;
+	private final int min;
 	
+	public int getHour() {
+		return hour;
+	}
+	public int getMin() {
+		return min;
+	}
 	/**
 	 * Construtor with Hour and minute
 	 * @param hour value
