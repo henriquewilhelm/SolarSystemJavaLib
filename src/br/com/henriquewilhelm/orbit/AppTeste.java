@@ -27,10 +27,11 @@ public class AppTeste {
 		GpsCoordinate gps = new GpsCoordinate(LATITUDE, LONGITUDE);
 		// current date	
 		Calendar calendar = Calendar.getInstance();
-//		calendar.set(Calendar.YEAR, 2015);
-//		calendar.set(Calendar.MONTH, 1);
-//		calendar.set(Calendar.DAY_OF_MONTH, 19);
-		
+		calendar.set(Calendar.YEAR, 2015);
+		calendar.set(Calendar.MONTH, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 10);
+//		calendar.set(Calendar.HOUR_OF_DAY, 1);
+//		calendar.set(Calendar.MINUTE, 30);
 		System.out.printf("**Calculations for %s****\n", calendar.getTime());
 		
 		Calculator calculator = new Calculator(gps, calendar);

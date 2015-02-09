@@ -23,18 +23,30 @@ public class Calculator {
 	public ArrayList<MoonEvent> getApogeeList() {
 			return apogeeList;
 	}
-
 	public void setApogeuList(ArrayList<MoonEvent> apogeuList) {
 			this.apogeeList = apogeuList;
 	}
-
 	public ArrayList<MoonEvent> getPerigeeList() {
 			return perigeeList;
 	}
-
 	public void setPerigeuList(ArrayList<MoonEvent> perigeuList) {
 			this.perigeeList = perigeuList;
 	}
+	public ArrayList<EclipseEvent> getEclipseLunar() {
+		return eclipseLunar;
+	}
+	public void setEclipseLunar(ArrayList<EclipseEvent> eclipseLunar) {
+		this.eclipseLunar = eclipseLunar;
+	}
+
+	public ArrayList<EclipseEvent> getEclipseSolar() {
+		return eclipseSolar;
+	}
+	public void setEclipseSolar(ArrayList<EclipseEvent> eclipseSolar) {
+		this.eclipseSolar = eclipseSolar;
+	}
+
+
 	/**
 	 * {#value #ERRORCORRECTIONDATE} Correction error in date class
 	 */
@@ -60,6 +72,10 @@ public class Calculator {
 	 * {@value #HOURS_IN_DAY}
 	 */
 	private static final int HOURS_IN_DAY = 24;
+	/**
+	 * {@value #MINUTE_IN_HOURS}
+	 */
+	private static final int MINUTE_IN_HOURS = 60;
 	/**
 	 * {@value #DR}
 	 */
@@ -105,6 +121,14 @@ public class Calculator {
 	 * Perigee List
 	 */
 	private ArrayList<MoonEvent> perigeeList;
+	/**
+	 * Eclipse Lunar List
+	 */
+	private ArrayList<EclipseEvent> eclipseLunar;
+	/**
+	 * Eclipse Solar List
+	 */
+	private ArrayList<EclipseEvent> eclipseSolar;
 
 	
 	/**
@@ -202,6 +226,8 @@ public class Calculator {
 		ret.setLunarYear(lunarYear);
 		ret.setApogeeList(getApogeeList());
 		ret.setPerigeeList(getPerigeeList());
+		ret.setEclipseLunar(getEclipseLunar());
+		ret.setEclipseSolar(getEclipseSolar());
 		
 		OrbitCalculator planetCalc = new OrbitCalculator();
 		ArrayList<Event> planetList;
@@ -303,6 +329,8 @@ public class Calculator {
 		double previousAscention = today.getRightAscention();
 		double previousDeclination = today.getDeclination();
 		
+//		System.out.println(previousDeclination);
+		
 		double changeInAscention   = tomorrow.getRightAscention() - today.getRightAscention();
 		double changeInDeclination = tomorrow.getDeclination()    - today.getDeclination();
 		
@@ -337,6 +365,7 @@ public class Calculator {
 			previousAscention   = asention;
 			previousDeclination = declination;
 			previousV           = intermediateTestResult.V;
+//			System.out.println(hourOfDay + " " +declination);
 		}
 	
 		return createEvent(testResult, today);
@@ -870,7 +899,7 @@ public class Calculator {
 		
 		ret = S * 360.0 * DR;
 		
-		//System.err.println("calculateLST: "+ret);
+//		System.err.println("calculateLST: "+ret);
 		return ret;
 	}
 	
@@ -1174,6 +1203,9 @@ public class Calculator {
 		
 		ArrayList<MoonEvent> mesLunar = new ArrayList<MoonEvent>();
 		ArrayList<ArrayList<MoonEvent>> lunarYear = new ArrayList<ArrayList<MoonEvent>>();
+		eclipseLunar = new ArrayList<EclipseEvent>();
+		eclipseSolar = new ArrayList<EclipseEvent>();
+		
 		int ano = calendar.get(Calendar.YEAR);
 		int mes = calendar.get(Calendar.MONTH);
 		int dia = calendar.get(Calendar.DAY_OF_MONTH);
@@ -1195,6 +1227,9 @@ public class Calculator {
 										daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
 										LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
 										daysFromEpoc = daysFromEpoc + timeZoneShift;
+										//calculate today sun
+										Position sunToday    = calculateSunPosition(daysFromEpoc);	
+										Position sunTomorrow    = calculateSunPosition(daysFromEpoc);
 										//calculate today moon
 										moonToday    = calculateMoonPosition(daysFromEpoc);
 										moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
@@ -1223,6 +1258,9 @@ public class Calculator {
 									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
 									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
 									daysFromEpoc = daysFromEpoc + timeZoneShift;
+									//calculate today sun
+									Position sunToday    = calculateSunPosition(daysFromEpoc);	
+									Position sunTomorrow    = calculateSunPosition(daysFromEpoc);	
 									//calculate today moon
 									moonToday    = calculateMoonPosition(daysFromEpoc);
 									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
@@ -1236,6 +1274,7 @@ public class Calculator {
 									moon.setDate(calendar.getTime());
 									moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
 									moon.setJulianDate(julianDate);
+									isEclipse(moon,moonTomorrow,sunToday,sunTomorrow);
 									mesLunar.add(moon);
 								}
 					}
@@ -1251,6 +1290,9 @@ public class Calculator {
 									daysFromEpoc = (julianDate - NEW_STANDARD_EPOC) + 0.5;
 									LST     = calculateLST(daysFromEpoc  , timeZoneShift, gps.getLongitude());
 									daysFromEpoc = daysFromEpoc + timeZoneShift;
+									//calculate today sun
+									Position sunToday    = calculateSunPosition(daysFromEpoc);	
+									Position sunTomorrow    = calculateSunPosition(daysFromEpoc);	
 									//calculate today moon
 									moonToday    = calculateMoonPosition(daysFromEpoc);
 									moonTomorrow = calculateMoonPosition(daysFromEpoc+1);
@@ -1341,4 +1383,123 @@ public class Calculator {
 		}
 		return "";
 	}
+	
+	public void isEclipse(MoonEvent moonToday, Position moonTomorrow, Position sunToday, Position sunTomorrow) {
+		Date dateBegin = null;
+		Date dateEnd = null;
+		
+		EclipseEvent eclipseMoon = null;
+		
+		double minuto = 0;
+		double second = 0;
+		
+		boolean solar = false;
+		boolean lunar = false;
+		double changeInDeclinationMoon = moonTomorrow.getDeclination() - moonToday.getPosition().getDeclination();
+		double changeInAscentionMoon   = moonTomorrow.getRightAscention() - moonToday.getPosition().getRightAscention();
+		double changeInLongitudeMoon = moonTomorrow.getLongitudeEcliptic() - moonToday.getPosition().getLongitudeEcliptic();
+		
+		double changeInDeclinationSun = sunTomorrow.getDeclination() - sunToday.getDeclination();
+		double changeInAscentionSun   = sunTomorrow.getRightAscention() - sunToday.getRightAscention();
+		double changeInLongitudeSun   = sunTomorrow.getLongitudeEcliptic() - sunToday.getLongitudeEcliptic();
+		
+		for(int hourOfDay=0; hourOfDay<HOURS_IN_DAY * MINUTE_IN_HOURS; hourOfDay++) {
+			
+			double fractionOfDay = (hourOfDay+1) / ((double)HOURS_IN_DAY * MINUTE_IN_HOURS);
+			
+			double declinationMoon = moonToday.getPosition().getDeclination() + fractionOfDay*changeInDeclinationMoon;
+			double ascentionMoon = moonToday.getPosition().getRightAscention() + fractionOfDay*changeInAscentionMoon;
+			double longitudeMoon = moonToday.getPosition().getLongitudeEcliptic() + fractionOfDay*changeInLongitudeMoon;
+		
+			double declinationSun = sunToday.getDeclination() + fractionOfDay*changeInDeclinationSun;
+			double ascentionSun = sunToday.getRightAscention() + fractionOfDay*changeInAscentionSun;
+			double longitudeSun = sunToday.getLongitudeEcliptic()+ fractionOfDay*changeInLongitudeSun;
+			
+			// Eclipse Solar
+//			if (declinationMoon < 0 && declinationSun < 0) {
+				declinationSun = Math.abs(declinationSun);
+				declinationMoon= Math.abs(declinationMoon);
+				
+//			}
+//			else if (declinationMoon < 0)
+//				declinationMoon= Math.abs(declinationMoon);
+//			else if (declinationSun < 0)
+//				declinationSun = Math.abs(declinationSun);
+//			
+			if ((longitudeMoon - longitudeSun >= -0.01 && longitudeMoon - longitudeSun <= 0.01) &&
+					(declinationMoon - declinationSun <= 0.034 && declinationMoon - declinationSun >= -0.0285)) {
+				
+					if (ascentionMoon - ascentionSun >= -0.000085 &&  ascentionMoon - ascentionSun <= 0.000046){
+							minuto =  (hourOfDay+1) * ((double) HOURS_IN_DAY / MINUTE_IN_HOURS);
+							second = minuto % ((int) minuto);
+							
+							if (dateBegin != moonToday.getDate()){
+								solar = true;
+								dateBegin = moonToday.getDate();
+								eclipseMoon = new EclipseEvent(moonToday);
+								eclipseMoon.setDateBegin(dateBegin);		
+								System.out.println(moonToday.getDate());
+								System.out.println("MoonToday	"  + "	Ra	" +moonToday.getPosition().getRightAscention()  + "	Dec	" + moonToday.getPosition().getDeclination() + "	Long.Eclip.	" + moonToday.getPosition().getLongitudeEcliptic());
+								System.out.println("SunToday	"  + "	Ra	" +sunToday.getRightAscention()  + "	Dec	" + sunToday.getDeclination() + "	Long.Eclip.	" + sunToday.getLongitudeEcliptic());
+								System.out.println("SunTomorrow	"  + "	Ra	" +sunTomorrow.getRightAscention()  + "	Dec	" + sunTomorrow.getDeclination() + "	Long.Eclip.	" + sunTomorrow.getLongitudeEcliptic());
+								System.out.println("MoonTomorrow	"  + "	Ra	" +moonTomorrow.getRightAscention()  + "	Dec	" + moonTomorrow.getDeclination() + "	Long.Eclip.	" + moonTomorrow.getLongitudeEcliptic());
+								System.out.println("Moon 	Dec "+ declinationMoon + "	Ra	" +ascentionMoon + "	Long.Eclip	"+longitudeMoon);
+								System.out.println("Sun 	Dec "+ declinationSun + "	Ra	" +ascentionSun + "	Long.Eclip	"+longitudeSun + "\n");
+							}
+					}
+			}
+			declinationMoon = moonToday.getPosition().getDeclination() + fractionOfDay*changeInDeclinationMoon;
+			ascentionMoon = moonToday.getPosition().getRightAscention() + fractionOfDay*changeInAscentionMoon;
+			longitudeMoon = moonToday.getPosition().getLongitudeEcliptic() + fractionOfDay*changeInLongitudeMoon;
+		
+			declinationSun = sunToday.getDeclination() + fractionOfDay*changeInDeclinationSun;
+			ascentionSun = sunToday.getRightAscention() + fractionOfDay*changeInAscentionSun;
+			longitudeSun = sunToday.getLongitudeEcliptic()+ fractionOfDay*changeInLongitudeSun;
+			double sunLongitudeEcliptic = sunToday.getLongitudeEcliptic() - 180;
+			if (sunLongitudeEcliptic<0){
+				sunLongitudeEcliptic = sunLongitudeEcliptic + 360;
+			}
+			longitudeSun = sunLongitudeEcliptic + fractionOfDay*changeInLongitudeSun;
+			if (declinationSun < 0)
+				declinationSun = Math.abs(declinationSun);
+			else if (declinationMoon < 0)
+				declinationMoon= Math.abs(declinationMoon);
+			if( (longitudeMoon - longitudeSun >= -1.2 && longitudeMoon - longitudeSun <= 1.2) &&
+					(declinationSun - declinationMoon >= -0.022 && declinationSun - declinationMoon <= 0.022) ){
+					if (dateBegin != moonToday.getDate()){
+						lunar = true;
+						dateBegin = moonToday.getDate();
+						eclipseMoon = new EclipseEvent(moonToday);
+						eclipseMoon.setDateBegin(dateBegin);
+//						System.out.println(moonToday.getDate());
+//						System.out.println("MoonToday	"  + "	Ra	" +moonToday.getPosition().getRightAscention()  + "	Dec	" + moonToday.getPosition().getDeclination() + "	Long.Eclip.	" + moonToday.getPosition().getLongitudeEcliptic());
+//						System.out.println("SunToday	"  + "	Ra	" +sunToday.getRightAscention()  + "	Dec	" + sunToday.getDeclination() + "	Long.Eclip.	" + sunToday.getLongitudeEcliptic());
+//						System.out.println("SunTomorrow	"  + "	Ra	" +sunTomorrow.getRightAscention()  + "	Dec	" + sunTomorrow.getDeclination() + "	Long.Eclip.	" + sunTomorrow.getLongitudeEcliptic());
+//						System.out.println("MoonTomorrow	"  + "	Ra	" +moonTomorrow.getRightAscention()  + "	Dec	" + moonTomorrow.getDeclination() + "	Long.Eclip.	" + moonTomorrow.getLongitudeEcliptic());
+//						System.out.println("Moon 	Dec "+ declinationMoon + "	Ra	" +ascentionMoon + "	Long.Eclip	"+longitudeMoon);
+//						System.out.println("Sun 	Dec "+ declinationSun + "	Ra	" +ascentionSun + "	Long.Eclip	"+longitudeSun);
+					}
+			}
+		}
+		if (solar){
+			eclipseMoon.setDateEnd(dateEnd);
+			getEclipseSolar().add(eclipseMoon);
+		}
+		if (lunar){
+			eclipseMoon.setDateEnd(dateEnd);
+			getEclipseLunar().add(eclipseMoon);
+		}
+	}
+	
+	double arredondar(double valor, int casas, int ceilOrFloor) {  
+	    double arredondado = valor;  
+	    arredondado *= (Math.pow(10, casas));  
+	    if (ceilOrFloor == 0) {  
+	        arredondado = Math.ceil(arredondado);             
+	    } else {  
+	        arredondado = Math.floor(arredondado);  
+	    }  
+	    arredondado /= (Math.pow(10, casas));  
+	    return arredondado;  
+	} 
 }
