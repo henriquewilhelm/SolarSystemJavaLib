@@ -22,6 +22,7 @@ public class Position {
 	private double rightAscention;    //in radians
 	private double declination;		 //in radians
 	private double longitudeEcliptic; //in Degree
+	private double latitudeEcliptic; //in Degree
 	private double distance;
 	
 	// Getters and Setters
@@ -42,6 +43,12 @@ public class Position {
 	}
 	public void setLongitudeEcliptic(double longitudeEcliptic) {
 		this.longitudeEcliptic = longitudeEcliptic;
+	}
+	public double getLatitudeEcliptic() {
+		return latitudeEcliptic;
+	}
+	public void setLatitudeEcliptic(double latitudeEcliptic) {
+		this.latitudeEcliptic = latitudeEcliptic;
 	}
 	public double getDistance() {
 		return distance;
