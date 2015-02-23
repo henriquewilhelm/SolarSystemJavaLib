@@ -1,4 +1,6 @@
 package br.com.henriquewilhelm.orbit;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 
 /**
@@ -196,5 +198,52 @@ public class Event {
 		NO_CHANGE_PREVIOUSLY_SET,
 		ONLY_SET,
 		ONLY_RISEN
+	}
+
+	@Override
+	public String toString() {
+		String str = getName() + "\t" +
+				 " JulianDate "+ getJulianDate() + "\t" +
+				 " Date " + getDate() + "\t";
+		if(getRise() != null) {
+			str = str + " Rise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t" ;
+		}
+		if(getSet() != null) {
+			str = str + " Set " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
+		}
+		str = str + " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
+				 " Zodiac " + getZodiac() +"\n";
+		return str;
+	}
+	
+	/**
+	 * Check azimuth (Double) in time, hour and minute.
+	 * @param t Time 
+	 * @param azimuth double value 
+	 * @return String value 
+	 */
+	public String formatTimeAndAzimuth(Time t, double azimuth) {
+		if(t == null) {
+			return " ----------- None ----------- ";
+		}
+		
+		StringWriter sw = new StringWriter();
+		PrintWriter writer = new PrintWriter(sw);
+		
+		writer.printf("(%s, azimuth %5.1f degrees)",
+				  replaceNull(t), azimuth);
+		
+		writer.flush();
+		return sw.getBuffer().toString();
+		
+	}
+	/**
+	 * Return String value ("--") for invalidates time ( hour and minute )
+	 * @param s Time
+	 * @return String value ("--")
+	 */
+	private String replaceNull(Time s) {
+		return s == null ? "--" : s.toString();
 	}
 }

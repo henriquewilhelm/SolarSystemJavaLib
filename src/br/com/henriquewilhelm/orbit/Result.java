@@ -45,6 +45,16 @@ public class Result {
 	private ArrayList<ArrayList<MoonEvent>> lunarYear;
 	
 	/**
+	 * Array list of Event Moon 
+	 */
+	private ArrayList<ArrayList<Event>> solarYear;
+	
+	/**
+	 * Array list of Event Moon 
+	 */
+	private ArrayList<ArrayList<ArrayList<Event>>> planetYear;
+	
+	/**
 	 * Moon's Apogeu ArrayList per year
 	 */
 	private ArrayList<MoonEvent> apogeeList;
@@ -113,7 +123,7 @@ public class Result {
 	public ArrayList<ArrayList<MoonEvent>> getLunarYear() {
 		return lunarYear;
 	}
-	public void setLunarYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
+	public void setCalculateYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
 		this.lunarYear = lunarYear;
 	}
 	public ArrayList<MoonEvent> getApogeeList() {
@@ -139,6 +149,21 @@ public class Result {
 	}
 	public void setEclipseSolar(ArrayList<EclipseEvent> eclipseSolar) {
 		this.eclipseSolar = eclipseSolar;
+	}
+	public ArrayList<ArrayList<Event>> getSolarYear() {
+		return solarYear;
+	}
+	public void setSolarYear(ArrayList<ArrayList<Event>> solarYear) {
+		this.solarYear = solarYear;
+	}
+	public ArrayList<ArrayList<ArrayList<Event>>> getPlanetYear() {
+		return planetYear;
+	}
+	public void setPlanetYear(ArrayList<ArrayList<ArrayList<Event>>> planetYear) {
+		this.planetYear = planetYear;
+	}
+	public void setLunarYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
+		this.lunarYear = lunarYear;
 	}
 	/**
 	 * Contrutor of Result
@@ -184,9 +209,9 @@ public class Result {
 			//nothing
 		}
 		
-		writer.printf("\nLongitude Ecliptical %s	", sun.getPosition().getLongitudeEcliptic());
-		writer.printf("\nZodiac %s\n", sun.getZodiac());
-		writer.printf("\nRA %s\n", sun.getPosition().getRightAscention());
+		writer.printf("\nLongitude Ecliptical %s", sun.getPosition().getLongitudeEcliptic());
+		writer.printf("\tZodiac %s", sun.getZodiac());
+		writer.printf("\tRA %s\n", sun.getPosition().getRightAscention());
 		writer.printf("Day Length  : %s", sun.getRisenAmount());
 		if(sun.getMeridianCrossing()==null) {
 			writer.println("");
@@ -204,8 +229,7 @@ public class Result {
 		writer.printf("Golden Hour          : (sunrise to %s, %s to sunset)\n", 
 			      replaceNull(goldenHour.getRise()),
 			      replaceNull(goldenHour.getSet()));
-
-		
+	
 		writer.printf("Civil Twilight       : (%s to sunrise, sunset to %s)",
 					  replaceNull(civilTwilight.getRise()), 
 					  replaceNull(civilTwilight.getSet()));
@@ -224,7 +248,7 @@ public class Result {
 		writer.printf(", Astronomical Night Length: %s\n", 
 					  replaceNull(astronomicalTwilight.getSetAmount()));
 
-		writer.printf("\nMoon Today\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+		writer.printf("\nMoon Today\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s	AnglePhase: %3.2f\n" ,
 				 	moonToday.getDate(),
 					  formatTimeAndAzimuth(moonToday.getRise(), moonToday.getRiseAzimuth()),
 					  formatTimeAndAzimuth(moonToday.getSet() , moonToday.getSetAzimuth()),
@@ -234,8 +258,9 @@ public class Result {
 					  moonToday.getPosition().getLongitudeEcliptic(),
 					  moonToday.getPosition().getDistance(),
 					  moonToday.getZodiac(),
-					  moonToday.getPerigeeOrApogee());
-		writer.printf("Moon Tomorrow\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s\n" ,
+					  moonToday.getPerigeeOrApogee(),
+					  moonToday.getAnglePhase());
+		writer.printf("Moon Tomorrow\n%s	Moonrise: %s   Moonset: %s   Moon age: %3.0f days   Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s	%s	AnglePhase: %3.2f\n" ,
 				moonTomorrow.getDate(),
 					formatTimeAndAzimuth(moonTomorrow.getRise(), moonTomorrow.getRiseAzimuth()),
 					  formatTimeAndAzimuth(moonTomorrow.getSet(),  moonTomorrow.getSetAzimuth()),
@@ -245,95 +270,54 @@ public class Result {
 					  moonTomorrow.getPosition().getLongitudeEcliptic(),
 					  moonTomorrow.getPosition().getDistance(),
 					  moonTomorrow.getZodiac(),
-					  moonTomorrow.getPerigeeOrApogee());
-	
+					  moonTomorrow.getPerigeeOrApogee(),
+					  moonTomorrow.getAnglePhase());
+		
+		writer.println("\nPlanets");
+		for (int i = 0; i < planetList.size(); i++) {
+			writer.printf(planetList.get(i).toString());
+		}
+		
+		writer.println("\nSolar Year");
+		for (int i = 0; i < solarYear.size(); i++) {
+			for (int j = 0; j < solarYear.get(i).size(); j++) {
+				writer.printf(solarYear.get(i).get(j).toString());
+			}
+		}
+		
 		writer.println("\nLunar Year");
 		for (int i = 0; i < lunarYear.size(); i++) {
 			for (int j = 0; j < lunarYear.get(i).size(); j++) {
-				writer.printf("%3.0f	%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.2f	Lat. Ecliptic%3.2f	Distance %3.2f	Zodiac %s	%s	%3.2f\n" ,
-						lunarYear.get(i).get(j).getJulianDate(), lunarYear.get(i).get(j).getDate(),
-						  formatTimeAndAzimuth(lunarYear.get(i).get(j).getRise(), lunarYear.get(i).get(j).getRiseAzimuth()),
-						  formatTimeAndAzimuth(lunarYear.get(i).get(j).getSet() , lunarYear.get(i).get(j).getSetAzimuth()),
-						  lunarYear.get(i).get(j).getAgeInDays(),
-						  lunarYear.get(i).get(j).getPhase(),
-						  lunarYear.get(i).get(j).getIlluminationPercent(),
-						  lunarYear.get(i).get(j).getPosition().getLongitudeEcliptic(),
-						  lunarYear.get(i).get(j).getPosition().getLatitudeEcliptic(),	
-						  lunarYear.get(i).get(j).getPosition().getDistance(),
-						  lunarYear.get(i).get(j).getZodiac(),
-						  lunarYear.get(i).get(j).getPerigeeOrApogee(),
-						  lunarYear.get(i).get(j).getPosition().getRightAscention());
+				writer.printf(lunarYear.get(i).get(j).toString());
 			}
 		}
-//		writer.println("\nApogee");
-//		for (int j = 0; j < apogeeList.size(); j++) {
-//			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	"
-//					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" ,
-//					apogeeList.get(j).getDate(),
-//					  formatTimeAndAzimuth(apogeeList.get(j).getRise(), apogeeList.get(j).getRiseAzimuth()),
-//					  formatTimeAndAzimuth(apogeeList.get(j).getSet() , apogeeList.get(j).getSetAzimuth()),
-//					  apogeeList.get(j).getAgeInDays(), 
-//					  apogeeList.get(j).getPhase(),
-//					  apogeeList.get(j).getIlluminationPercent(),
-//					  apogeeList.get(j).getPosition().getLongitudeEcliptic(),
-//					  apogeeList.get(j).getPosition().getDistance(),
-//					  apogeeList.get(j).getZodiac());
-//		}
-//		writer.println("\nPerigee");
-//		for (int j = 0; j < perigeeList.size(); j++) {
-//			writer.printf("%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f	days   Phase %s	"
-//					+ "Illumination: %3.0f%%	Long. Ecliptic%3.1f	Distance %3.2f	Zodiac %s\n" ,
-//					perigeeList.get(j).getDate(),
-//					  formatTimeAndAzimuth(perigeeList.get(j).getRise(), perigeeList.get(j).getRiseAzimuth()),
-//					  formatTimeAndAzimuth(perigeeList.get(j).getSet() , perigeeList.get(j).getSetAzimuth()),
-//					  perigeeList.get(j).getAgeInDays(),
-//					  perigeeList.get(j).getPhase(),
-//					  perigeeList.get(j).getIlluminationPercent(),
-//					  perigeeList.get(j).getPosition().getLongitudeEcliptic(),
-//					  perigeeList.get(j).getPosition().getDistance(),
-//					  perigeeList.get(j).getZodiac());
-//		}
-//		writer.println("\nPlanets");
-//		for (int i = 0; i < planetList.size(); i++) {
-//			writer.printf("Today %s	planet SET: %s	RISE %s	Long. Ecliptic %3.1f	Distance %f3,1	Zodiac %s\n", 
-//					planetList.get(i).getName(),
-//					formatTimeAndAzimuth(planetList.get(i).getRise(), planetList.get(i).getRiseAzimuth()),
-//					formatTimeAndAzimuth(planetList.get(i).getSet(),  planetList.get(i).getSetAzimuth()),
-//					planetList.get(i).getPosition().getLongitudeEcliptic(),
-//					planetList.get(i).getPosition().getDistance(),
-//					planetList.get(i).getZodiac());
-//		}
+		writer.println("\nApogee");
+		for (int j = 0; j < apogeeList.size(); j++) {
+			writer.printf(apogeeList.get(j).toString());
+		}
+		writer.println("\nPerigee");
+		for (int j = 0; j < perigeeList.size(); j++) {
+			writer.printf(perigeeList.get(j).toString());
+		}
+		
 		writer.println("\nEclipse Lunar");
 		for (int i = 0; i < eclipseLunar.size(); i++) {
-				writer.printf("%3.0f	%s	%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.2f	Lat. Ecliptic%3.2f	Distance %3.2f	Zodiac %s	%s\n" ,
-						eclipseLunar.get(i).getJulianDate(), eclipseLunar.get(i).getDateBegin(), eclipseLunar.get(i).getDateEnd(),
-						  formatTimeAndAzimuth(eclipseLunar.get(i).getRise(), eclipseLunar.get(i).getRiseAzimuth()),
-						  formatTimeAndAzimuth(eclipseLunar.get(i).getSet() , eclipseLunar.get(i).getSetAzimuth()),
-						  eclipseLunar.get(i).getAgeInDays(),
-						  eclipseLunar.get(i).getPhase(),
-						  eclipseLunar.get(i).getIlluminationPercent(),
-						  eclipseLunar.get(i).getPosition().getLongitudeEcliptic(),
-						  eclipseLunar.get(i).getPosition().getLatitudeEcliptic(),						  
-						  eclipseLunar.get(i).getPosition().getDistance(),
-						  eclipseLunar.get(i).getZodiac(),
-						  eclipseLunar.get(i).getPerigeeOrApogee());
+				writer.printf(eclipseLunar.get(i).toString());
 			
 		}
 		writer.println("\nEclipse Solar");
 		for (int i = 0; i < eclipseSolar.size(); i++) {
-				writer.printf("%3.0f	%s	%s	Moonrise: %s	Moonset: %s	Moon age: %3.0f days	Phase %s	Illumination: %3.0f%%	Long. Ecliptic%3.2f	Lat. Ecliptic%3.2f	Distance %3.2f	Zodiac %s	%s\n" ,
-						eclipseSolar.get(i).getJulianDate(), eclipseSolar.get(i).getDateBegin(), eclipseSolar.get(i).getDateEnd(),
-						  formatTimeAndAzimuth(eclipseSolar.get(i).getRise(), eclipseSolar.get(i).getRiseAzimuth()),
-						  formatTimeAndAzimuth(eclipseSolar.get(i).getSet() , eclipseSolar.get(i).getSetAzimuth()),
-						  eclipseSolar.get(i).getAgeInDays(),
-						  eclipseSolar.get(i).getPhase(),
-						  eclipseSolar.get(i).getIlluminationPercent(),
-						  eclipseSolar.get(i).getPosition().getLongitudeEcliptic(),
-						  eclipseSolar.get(i).getPosition().getLatitudeEcliptic(),						  
-						  eclipseSolar.get(i).getPosition().getDistance(),
-						  eclipseSolar.get(i).getZodiac(),
-						  eclipseSolar.get(i).getPerigeeOrApogee());
+				writer.printf(eclipseSolar.get(i).toString());
 			
+		}
+		writer.println("\nPlanets Year");
+		for (int i = 0; i < planetYear.size(); i++) {
+			for (int j = 0; j < planetYear.get(i).size(); j++) {
+				for (int l = 0; l < planetYear.get(i).get(j).size(); l++) {
+					writer.printf(planetYear.get(i).get(j).get(l) + " ");
+				}
+				writer.printf("\n");
+			}
 		}
 		writer.flush();
 		return sw.getBuffer().toString();

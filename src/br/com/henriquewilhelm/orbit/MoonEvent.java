@@ -1,5 +1,8 @@
 package br.com.henriquewilhelm.orbit;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * The class extends of Event class, gathers the calculations of Moon
  * The calculations are:
@@ -30,6 +33,8 @@ public class MoonEvent extends Event {
 	 */
 	private String perigeeOrApogee;
 	
+	private double anglePhase;
+	
 	//Getters and Setters
 	public double getAgeInDays() {
 		return ageInDays;
@@ -55,6 +60,13 @@ public class MoonEvent extends Event {
 	public void setPerigeeOrApogee(String perigeeOrApogee) {
 		this.perigeeOrApogee = perigeeOrApogee;
 	}
+	
+	public double getAnglePhase() {
+		return anglePhase;
+	}
+	public void setAnglePhase(double anglePhase) {
+		this.anglePhase = anglePhase;
+	}
 	/**
 	 * Construtor without Event
 	 */
@@ -79,4 +91,29 @@ public class MoonEvent extends Event {
 		setZodiac(event.getZodiac());
 		setName("Moon");
 	}
+	
+	@Override
+	public String toString() {
+		String str;
+		str = getName() + "\t" +
+				 " Julian Date "+ getJulianDate() + "\t" +
+				 " Date " + getDate() + "\t";
+		if(getRise() != null) {
+			str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
+		}
+		if(getSet() != null) {
+			str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
+		}
+		str = str +  " Moon age " + getAgeInDays() + "\t" +
+				 " Phase " + getPhase() + "\t" +
+				 " Illumination "+ getIlluminationPercent() + "\t" +
+				 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+				 " Lat. Ecliptic " + getPosition().getLatitudeEcliptic() + "\t" +
+				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
+				 " Distance " +  getPosition().getDistance() + "\t" + 
+				 " Zodiac " + getZodiac() + "\t" +
+				 " AnglePhase " + getAnglePhase() + "\t" + getPerigeeOrApogee() +"\n";
+		return str;
+	}
+	
 }

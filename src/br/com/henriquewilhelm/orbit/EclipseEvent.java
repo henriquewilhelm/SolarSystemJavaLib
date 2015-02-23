@@ -15,9 +15,8 @@ import java.util.Date;
  * @version v1.0.0
  */
 public class EclipseEvent extends MoonEvent {
-	/**
-	 * Construtor without Event
-	 */
+	
+	private String eclipseType;
 	
 	private Date dateBegin;
 	
@@ -35,7 +34,15 @@ public class EclipseEvent extends MoonEvent {
 	public void setDateEnd(Date dateEnd) {
 		this.dateEnd = dateEnd;
 	}
-	
+	public String getEclipseType() {
+		return eclipseType;
+	}
+	public void setEclipseType(String eclipeType) {
+		this.eclipseType = eclipeType;
+	}
+	/**
+	 * Construtor without Event
+	 */
 	public EclipseEvent() { }
 	/**
 	 * Construtor with MoonEvent
@@ -59,6 +66,32 @@ public class EclipseEvent extends MoonEvent {
 		setPhase(event.getPhase());
 		setIlluminationPercent(event.getIlluminationPercent());
 		setAgeInDays(event.getAgeInDays());
+		setAnglePhase(event.getAnglePhase());
 		setName("Moon");
+	}
+	
+	@Override
+	public String toString() {
+		String str;
+		str = "Eclipse Type "+ getEclipseType() + "\t" +
+				 " Julian Date "+ getJulianDate() + "\t" +
+				 " Date Begin " + getDateBegin() + "\t" + 
+				 " Date End " + getDateEnd() + "\t";
+		if(getRise() != null) {
+				str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
+		}
+		if(getSet() != null) {
+				str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
+		}
+		str = str +  " Moon age " + getAgeInDays() + "\t" +
+				 " Phase " + getPhase() + "\t" +
+				 " Illumination "+ getIlluminationPercent() + "\t" +
+				 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+				 " Lat. Ecliptic " + getPosition().getLatitudeEcliptic() + "\t" +
+				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
+				 " Distance " +  getPosition().getDistance() + "\t" + 
+				 " Zodiac " + getZodiac() + "\t" +
+				 " AnglePhase " + getAnglePhase() + "\t" + getPerigeeOrApogee() +"\n";
+		return str;
 	}
 }
