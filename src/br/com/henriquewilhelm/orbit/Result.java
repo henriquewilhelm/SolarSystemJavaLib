@@ -1,6 +1,7 @@
 package br.com.henriquewilhelm.orbit;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
@@ -15,8 +16,12 @@ import java.util.ArrayList;
  * @version v2.0.0
  */
 
-public class Result {
+public class Result implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1035726271215559506L;
 	/**
 	 * Event sun - calculate sun events
 	 */
@@ -123,7 +128,7 @@ public class Result {
 	public ArrayList<ArrayList<MoonEvent>> getLunarYear() {
 		return lunarYear;
 	}
-	public void setCalculateYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
+	public void setLunarYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
 		this.lunarYear = lunarYear;
 	}
 	public ArrayList<MoonEvent> getApogeeList() {
@@ -159,18 +164,17 @@ public class Result {
 	public ArrayList<ArrayList<ArrayList<Event>>> getPlanetYear() {
 		return planetYear;
 	}
-	public void setPlanetYear(ArrayList<ArrayList<ArrayList<Event>>> planetYear) {
+	public void setPlanetYear(ArrayList<ArrayList<ArrayList<Event>	>> planetYear) {
 		this.planetYear = planetYear;
 	}
-	public void setLunarYear(ArrayList<ArrayList<MoonEvent>> lunarYear) {
-		this.lunarYear = lunarYear;
-	}
+    
 	/**
 	 * Contrutor of Result
-	 */
+	 */   
 	public Result() {
 		super();
 	}
+	
 	/**
 	 * Return the results of calculations performed by the calculator of the solar system.
 	 * @return String value of Result
@@ -278,19 +282,19 @@ public class Result {
 			writer.printf(planetList.get(i).toString());
 		}
 		
-		writer.println("\nSolar Year");
-		for (int i = 0; i < solarYear.size(); i++) {
-			for (int j = 0; j < solarYear.get(i).size(); j++) {
-				writer.printf(solarYear.get(i).get(j).toString());
-			}
-		}
-		
-		writer.println("\nLunar Year");
-		for (int i = 0; i < lunarYear.size(); i++) {
-			for (int j = 0; j < lunarYear.get(i).size(); j++) {
-				writer.printf(lunarYear.get(i).get(j).toString());
-			}
-		}
+//		writer.println("\nSolar Year");
+//		for (int i = 0; i < solarYear.size(); i++) {
+//			for (int j = 0; j < solarYear.get(i).size(); j++) {
+//				writer.printf(solarYear.get(i).get(j).toString());
+//			}
+//		}
+//		
+//		writer.println("\nLunar Year");
+//		for (int i = 0; i < lunarYear.size(); i++) {
+//			for (int j = 0; j < lunarYear.get(i).size(); j++) {
+//				writer.printf(lunarYear.get(i).get(j).toString());
+//			}
+//		}
 		writer.println("\nApogee");
 		for (int j = 0; j < apogeeList.size(); j++) {
 			writer.printf(apogeeList.get(j).toString());
@@ -308,17 +312,16 @@ public class Result {
 		writer.println("\nEclipse Solar");
 		for (int i = 0; i < eclipseSolar.size(); i++) {
 				writer.printf(eclipseSolar.get(i).toString());
-			
 		}
-		writer.println("\nPlanets Year");
-		for (int i = 0; i < planetYear.size(); i++) {
-			for (int j = 0; j < planetYear.get(i).size(); j++) {
-				for (int l = 0; l < planetYear.get(i).get(j).size(); l++) {
-					writer.printf(planetYear.get(i).get(j).get(l) + " ");
-				}
-				writer.printf("\n");
-			}
-		}
+//		writer.println("\nPlanets Year");
+//		for (int i = 0; i < planetYear.size(); i++) {
+//			for (int j = 0; j < planetYear.get(i).size(); j++) {
+//				for (int l = 0; l < planetYear.get(i).get(j).size(); l++) {
+//					writer.printf(planetYear.get(i).get(j).get(l) + " ");
+//				}
+//				writer.printf("\n");
+//			}
+//		}
 		writer.flush();
 		return sw.getBuffer().toString();
 	}
@@ -330,7 +333,7 @@ public class Result {
 	 */
 	private String formatTimeAndAzimuth(Time t, double azimuth) {
 		if(t == null) {
-			return " ----------- None ----------- ";
+			return "None";
 		}
 		
 		StringWriter sw = new StringWriter();
@@ -351,5 +354,4 @@ public class Result {
 	private String replaceNull(Time s) {
 		return s == null ? "--" : s.toString();
 	}
-	
 }

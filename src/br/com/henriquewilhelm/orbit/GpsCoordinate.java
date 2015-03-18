@@ -1,5 +1,7 @@
 package br.com.henriquewilhelm.orbit;
 
+import java.io.Serializable;
+
 /**
  * GPS Coordinate (Latitude x Longitude)
  * 
@@ -7,7 +9,11 @@ package br.com.henriquewilhelm.orbit;
  * @version v1.0.0
  */
 
-public class GpsCoordinate {
+public class GpsCoordinate implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1518328647115667495L;
 	/**
 	 * LATITUDE YOUR LOCATION (North latitudes positive)
 	 */

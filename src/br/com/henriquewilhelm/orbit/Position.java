@@ -1,7 +1,9 @@
 package br.com.henriquewilhelm.orbit;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
+
 
 /**
  * The Position class gathers the position of one element of the solar system  
@@ -13,7 +15,12 @@ import java.io.StringWriter;
  * @author zoglmannk v1.0.0
  * @version v2.0.0
  */
-public class Position {
+public class Position implements Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1701865624853610383L;
+
 	/**
 	 * DR - Degrees to radians constant
 	 */
@@ -58,17 +65,6 @@ public class Position {
 	}
 	
 	/**
-	 * Contrutor with without distance
-	 * @param rightAscention double value
-	 * @param declination double value
-	 * @param longitudeEcliptic double value
-	 */
-	public Position(double rightAscention, double declination, double longitudeEcliptic) {
-		this.rightAscention = rightAscention;
-		this.declination = declination;
-		this.longitudeEcliptic = longitudeEcliptic;
-	}
-	/**
 	 * Contrutor with witht distance
 	 * @param rightAscention double value
 	 * @param declination double value
@@ -81,6 +77,7 @@ public class Position {
 		this.longitudeEcliptic = longitudeEcliptic;
 		this.distance = distance;
 	}
+	
 	/**
 	 * @return String value
 	 */
@@ -176,6 +173,5 @@ public class Position {
 			writer.flush();
 			return sw.getBuffer().toString();
 		}
-	
 	}
 }

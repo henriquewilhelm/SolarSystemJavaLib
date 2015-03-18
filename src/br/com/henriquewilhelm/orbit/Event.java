@@ -1,5 +1,6 @@
 package br.com.henriquewilhelm.orbit;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Date;
 
@@ -17,7 +18,13 @@ import java.util.Date;
  * @author zoglmannk v1.0.0
  * @version v2.0.0
  */
-public class Event {
+public class Event implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4182491073108221946L;
+	int id;
 	/**
 	 * Name of Element of system solar
 	 */
@@ -66,6 +73,14 @@ public class Event {
 	
 	private String zodiac;
 		
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -185,7 +200,12 @@ public class Event {
 	public void setType(HorizonToHorizonCrossing type) {
 		this.type = type;
 	}
-
+	
+	/**
+	 * Construtor without Event
+	 */
+	public Event() { }
+	
 	/**
 	/**
 	 * Type of Horizon Crossing (NO_CHANGE_PREVIOUSLY_RISEN, NO_CHANGE_PREVIOUSLY_SET, ONLY_RISEN 
@@ -202,16 +222,14 @@ public class Event {
 
 	@Override
 	public String toString() {
-		String str = getName() + "\t" +
+			String str = getName() + "\t" +
 				 " JulianDate "+ getJulianDate() + "\t" +
 				 " Date " + getDate() + "\t";
-		if(getRise() != null) {
 			str = str + " Rise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t" ;
-		}
-		if(getSet() != null) {
+		
 			str = str + " Set " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
-		}
-		str = str + " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+		
+			str = str + " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
 				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
 				 " Zodiac " + getZodiac() +"\n";
 		return str;
@@ -247,3 +265,7 @@ public class Event {
 		return s == null ? "--" : s.toString();
 	}
 }
+
+
+
+	

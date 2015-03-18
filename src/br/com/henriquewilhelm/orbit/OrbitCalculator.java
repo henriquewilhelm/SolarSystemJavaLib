@@ -55,8 +55,8 @@ public class OrbitCalculator {
 	 * <p>"Mercury", "Venus  ", "Earth", "Mars",
 	 * "Jupiter", "Saturn ", "Uranus ", "Neptune", "Pluto"</p>
 	 */
-	private final String[] name = new String[] { "Mercury", "Venus  ", "Earth", "Mars",
-									"Jupiter", "Saturn ", "Uranus ", "Neptune", "Pluto" };
+	private final String[] name = new String[] { "Mercury", "Venus", "Earth", "Mars",
+									"Jupiter", "Saturn", "Uranus", "Neptune", "Pluto" };
 
 	/**
 	 * Construtor Orbit Calculator
@@ -79,6 +79,7 @@ public class OrbitCalculator {
 			obj = get_coord(i, dt);
 			objNext = get_coord(i, dt+1);//+1 == Tomorrow
 			obj.setPositionTomorrow(objNext.getPosition());
+			if (i!=2)	//earth/sun
 			planetList.add(obj);
 		}
 		return planetList;

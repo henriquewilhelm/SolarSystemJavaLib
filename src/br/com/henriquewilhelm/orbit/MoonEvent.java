@@ -1,7 +1,6 @@
 package br.com.henriquewilhelm.orbit;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.Serializable;
 
 /**
  * The class extends of Event class, gathers the calculations of Moon
@@ -15,7 +14,11 @@ import java.io.StringWriter;
  * @author zoglmannk v1.0.0
  * @version v1.0.0
  */
-public class MoonEvent extends Event {
+public class MoonEvent extends Event implements Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3841306454727143439L;
 	/**
 	 * Age in Days (1 to 28)
 	 */
@@ -67,10 +70,12 @@ public class MoonEvent extends Event {
 	public void setAnglePhase(double anglePhase) {
 		this.anglePhase = anglePhase;
 	}
+	
 	/**
 	 * Construtor without Event
 	 */
 	public MoonEvent() { }
+	
 	/**
 	 * Construtor with MoonEvent
 	 * @param event Event class
@@ -94,17 +99,16 @@ public class MoonEvent extends Event {
 	
 	@Override
 	public String toString() {
-		String str;
-		str = getName() + "\t" +
-				 " Julian Date "+ getJulianDate() + "\t" +
-				 " Date " + getDate() + "\t";
-		if(getRise() != null) {
-			str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
-		}
-		if(getSet() != null) {
-			str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
-		}
-		str = str +  " Moon age " + getAgeInDays() + "\t" +
+				String str;
+				str = getName() + "\t" +
+						 " Julian Date "+ getJulianDate() + "\t" +
+						 " Date " + getDate() + "\t";
+
+				str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
+		
+				str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
+
+				str = str +  " Moon age " + getAgeInDays() + "\t" +
 				 " Phase " + getPhase() + "\t" +
 				 " Illumination "+ getIlluminationPercent() + "\t" +
 				 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
@@ -115,5 +119,4 @@ public class MoonEvent extends Event {
 				 " AnglePhase " + getAnglePhase() + "\t" + getPerigeeOrApogee() +"\n";
 		return str;
 	}
-	
 }

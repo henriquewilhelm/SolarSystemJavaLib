@@ -1,10 +1,17 @@
 package br.com.henriquewilhelm.orbit;
+
+import java.io.Serializable;
+
 /**
  * This class joins the necessary variables to the calculations performed on each element of the solar system
  * @author Henrique Wilhelm v2.0.0
  * @version v2.0.0
  */
-public class Coordinates {
+public class Coordinates implements Serializable {
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 3224544184576505900L;
 	/**
 	 * Semi-major axis [AU]
 	 */
@@ -76,6 +83,7 @@ public class Coordinates {
 
 	public void setL(double l) {
 		L = l;
+		
 	}
 
 	public String toString() {

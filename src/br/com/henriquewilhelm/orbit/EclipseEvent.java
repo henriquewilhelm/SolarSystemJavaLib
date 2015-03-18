@@ -1,5 +1,6 @@
 package br.com.henriquewilhelm.orbit;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,8 +15,10 @@ import java.util.Date;
  * @author zoglmannk v1.0.0
  * @version v1.0.0
  */
-public class EclipseEvent extends MoonEvent {
+public class EclipseEvent extends MoonEvent implements Serializable {
 	
+	private static final long serialVersionUID = 1318620171715077216L;
+
 	private String eclipseType;
 	
 	private Date dateBegin;
@@ -40,6 +43,7 @@ public class EclipseEvent extends MoonEvent {
 	public void setEclipseType(String eclipeType) {
 		this.eclipseType = eclipeType;
 	}
+	
 	/**
 	 * Construtor without Event
 	 */
@@ -77,13 +81,12 @@ public class EclipseEvent extends MoonEvent {
 				 " Julian Date "+ getJulianDate() + "\t" +
 				 " Date Begin " + getDateBegin() + "\t" + 
 				 " Date End " + getDateEnd() + "\t";
-		if(getRise() != null) {
+
 				str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
-		}
-		if(getSet() != null) {
+				
 				str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
-		}
-		str = str +  " Moon age " + getAgeInDays() + "\t" +
+				
+				str = str +  " Moon age " + getAgeInDays() + "\t" +
 				 " Phase " + getPhase() + "\t" +
 				 " Illumination "+ getIlluminationPercent() + "\t" +
 				 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +

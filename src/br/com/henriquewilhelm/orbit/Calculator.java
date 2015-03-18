@@ -1,8 +1,10 @@
 package br.com.henriquewilhelm.orbit;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 
 /**
  * System Solar Calculator
@@ -201,9 +203,9 @@ public class Calculator {
 	 * @param calendar
 	 */
 	public Calculator(GpsCoordinate gps, Calendar calendar) {
-		perigeeApogeeCalculator = new PerigeeApogeeCalculator(calendar);
-		apogeeList = new ArrayList<MoonEvent>();
-		perigeeList = new ArrayList<MoonEvent>();
+		this.perigeeApogeeCalculator = new PerigeeApogeeCalculator(calendar);
+		this.apogeeList = new ArrayList<MoonEvent>();
+		this.perigeeList = new ArrayList<MoonEvent>();
 		this.gps = gps;   
 		this.calendar = calendar;
 	}
@@ -220,7 +222,7 @@ public class Calculator {
 		this.calendar = calendar;
 		return calculate ();
 	}
-	
+		
 	/** 
 	 * Calculate Sunset, sunrise and Positions (...)
 	 * 
@@ -318,9 +320,17 @@ public class Calculator {
 	 * @param calendar instance of calendar
 	 * @return double value of real DST (Date Summer Time)
 	 */
-	private double calculateUtcToDSTLocal(Calendar calendar) {		
+	private double calculateUtcToDSTLocal(Calendar calendar) {	
 		int offset = calendar.get(Calendar.DST_OFFSET);
-		double UTC_TO_DST = calendar.getTimeZone().getRawOffset() / calendar.getTimeZone().getDSTSavings();
+		Double rawOffSet = (double) calendar.getTimeZone().getRawOffset();
+		Double dstSavings = (double) calendar.getTimeZone().getDSTSavings();
+		Double UTC_TO_DST = 0d;
+		try{
+			UTC_TO_DST = rawOffSet / dstSavings;
+		}
+		catch (ArithmeticException e){
+			System.out.println("Erro function calculateUtcToDSTLocal "+e.getMessage());
+		}
 		if (offset>0){
 			UTC_TO_DST = UTC_TO_DST + 1;
 //			System.out.println("Summer Time");
@@ -367,7 +377,7 @@ public class Calculator {
 			double longitudeEcliptical = Math.toDegrees(ascention);
 			if (longitudeEcliptical > 360)
 				longitudeEcliptical = longitudeEcliptical - 360;
-			second = new Position(ascention, second.getRightAscention(), longitudeEcliptical);
+			second = new Position(ascention, second.getRightAscention(), longitudeEcliptical, 0);
 		}
 		
 		return second;
@@ -948,7 +958,7 @@ public class Calculator {
 		longitudeEcliptical = longitudeEcliptical < 360 ? longitudeEcliptical : longitudeEcliptical-360;
 
 //		System.err.println("calculatePosition: ("+rightAscention+","+declination+")");
-		return new Position(rightAscention, declination, longitudeEcliptical);
+		return new Position(rightAscention, declination, longitudeEcliptical, 0);
 	}
 	
 	
@@ -1250,7 +1260,7 @@ public class Calculator {
 		// Time measured in Julian centuries from epoch J2000.0:
 		Date Tepoch = new Date(2000, 0, 1);
 		Tepoch.setTime(getTime(Tepoch.getTime()));
-		Double T = (decimalYears(date) - decimalYears(Tepoch)) / 100.;
+		Double T = (decimalYears(date)+ERRORCORRECTIONDATE - decimalYears(Tepoch)) / 100.;
 		Double T2 = T * T;
 		Double T3 = T2 * T;
 		Double T4 = T3 * T;
@@ -1378,10 +1388,15 @@ public class Calculator {
 
 		Position moonToday = null;
 		Position moonTomorrow;
-		for (int iMonth = 0; iMonth <= 13; iMonth++) {
+		for (int iMonth = 0; iMonth < 14; iMonth++) {
 				monthLunar = new ArrayList<MoonEvent>();
 				monthSolar = new ArrayList<Event>();
-				monthPlanet = new ArrayList<ArrayList<Event>>();
+				if (iMonth >= 1 && iMonth <= 12){
+					monthPlanet = new ArrayList<ArrayList<Event>>(9);
+					for (int iDay = 0; iDay < 9; iDay++) {
+						monthPlanet.add(new ArrayList<Event>());
+					};
+				}
 				for (int iDay = 1; iDay <= 31; iDay++) {
 					if (iMonth == 0){
 								if (isDayOfMonth(iDay, 12,ano-1)) {
@@ -1454,9 +1469,9 @@ public class Calculator {
 									moon.setZodiac(zodiac(moonToday.getLongitudeEcliptic()));
 									moon.setPhase(phase(moon.getAgeInDays()));
 									moon.setDate(calendar.getTime());
-									moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
 									moon.setJulianDate(julianDate);
 									moon.setAnglePhase(getAnglePhase(calendar.getTime()));
+									moon.setPerigeeOrApogee(setApogeuAndPerigeu(moon));
 									isEclipseLunar(moon,moonTomorrow,sunToday,sunTomorrow);
 									isEclipseSolar(moon,moonTomorrow,sunToday,sunTomorrow);
 									monthLunar.add(moon);
@@ -1464,7 +1479,7 @@ public class Calculator {
 									//calculate planets
 									OrbitCalculator planetCalc = new OrbitCalculator();
 									ArrayList<Event> planetList = planetCalc.computeElementsPosition(daysFromEpoc);
-									ArrayList<Event> planetDaysOfMonth = new ArrayList<Event>();
+									
 									
 									for (int i=0; i<planetList.size(); i++){
 										Position planetToday    = planetList.get(i).getPosition();
@@ -1477,10 +1492,36 @@ public class Calculator {
 										aux.setJulianDate(julianDate);
 										aux.setName(planetList.get(i).getName());
 										aux.setPosition(planetToday);
+										
 										aux.setZodiac(zodiac(planetToday.getLongitudeEcliptic()));
-										planetDaysOfMonth.add(aux);
+										  if (aux.getName().equals("Mercury")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Venus")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Mars")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Earth")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Jupiter")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Saturn")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Uranus")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Neptune")){
+											  	monthPlanet.get(i).add(aux);
+										  }
+										  else if (aux.getName().equals("Pluto")){
+											  	monthPlanet.get(i).add(aux);
+										  }
 									}
-									monthPlanet.add(planetDaysOfMonth);
 								}
 					}
 					if (iMonth == 13){
@@ -1522,8 +1563,10 @@ public class Calculator {
 //				System.out.println("- Julian date: "+julianDate+ " "+calendar.getTime() + " " + moon.position.date);
 				}
 				lunarYear.add(monthLunar);
-				solarYear.add(monthSolar);
-				planetYear.add(monthPlanet);
+				if (iMonth >= 1 && iMonth <= 12){
+					solarYear.add(monthSolar);
+					planetYear.add(monthPlanet);
+				}	
 		}
 		// Update to current date time
 		calendar.set(Calendar.YEAR, ano);

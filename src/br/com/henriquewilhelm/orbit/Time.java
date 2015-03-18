@@ -1,8 +1,8 @@
 package br.com.henriquewilhelm.orbit;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
-
 
 /**
  * The only reason this class exists is so that this reference
@@ -12,8 +12,12 @@ import java.io.StringWriter;
  * @author zoglmannk v1.0.0
  * @version v1.0.0
  */
-public class Time {
+public class Time implements Serializable {
 	
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -1533636938589830203L;
 	private final int hour;
 	private final int min;
 	
