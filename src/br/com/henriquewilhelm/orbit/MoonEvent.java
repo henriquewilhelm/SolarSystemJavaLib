@@ -1,6 +1,7 @@
 package br.com.henriquewilhelm.orbit;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * The class extends of Event class, gathers the calculations of Moon
@@ -37,6 +38,32 @@ public class MoonEvent extends Event implements Serializable  {
 	private String perigeeOrApogee;
 	
 	private double anglePhase;
+	
+	private String eclipseType;
+	
+	private Date dateBegin;
+	
+	private Date dateEnd;
+	
+	public Date getDateBegin() {
+		return dateBegin;
+	}
+	public void setDateBegin(Date dateBegin) {
+		this.dateBegin = dateBegin;
+	}
+	public Date getDateEnd() {
+		return dateEnd;
+	}
+	public void setDateEnd(Date dateEnd) {
+		this.dateEnd = dateEnd;
+	}
+	public String getEclipseType() {
+		return eclipseType;
+	}
+	public void setEclipseType(String eclipeType) {
+		this.eclipseType = eclipeType;
+	}
+	
 	
 	//Getters and Setters
 	public double getAgeInDays() {
@@ -101,22 +128,22 @@ public class MoonEvent extends Event implements Serializable  {
 	public String toString() {
 				String str;
 				str = getName() + "\t" +
-						 " Julian Date "+ getJulianDate() + "\t" +
-						 " Date " + getDate() + "\t";
-
-				str = str + " Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t";
-		
-				str = str +  " Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
-
-				str = str +  " Moon age " + getAgeInDays() + "\t" +
-				 " Phase " + getPhase() + "\t" +
-				 " Illumination "+ getIlluminationPercent() + "\t" +
-				 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
-				 " Lat. Ecliptic " + getPosition().getLatitudeEcliptic() + "\t" +
-				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
-				 " Distance " +  getPosition().getDistance() + "\t" + 
-				 " Zodiac " + getZodiac() + "\t" +
-				 " AnglePhase " + getAnglePhase() + "\t" + getPerigeeOrApogee() +"\n";
+				" Julian Date "+ getJulianDate() + "\t" +
+				" Date " + getDate() + "\t" +
+				" Moonrise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t" +
+				" Moonset " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t" +
+				" Moon age " + getAgeInDays() + "\t" +
+				" Phase " + getPhase() + "\t" +
+				" Illumination "+ getIlluminationPercent() + "\t" +
+				" Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+				" Lat. Ecliptic " + getPosition().getLatitudeEcliptic() + "\t" +
+				" Right Ascention " + getPosition().getRightAscention() + "\t" +
+				" Distance " +  getPosition().getDistance() + "\t" + 
+				" Zodiac " + getZodiac() + "\t" +
+				" AnglePhase " + getAnglePhase() + "\t" + getPerigeeOrApogee() +"\t" +
+				" Eclipse Type "+ getEclipseType() + "\t" +
+				" Date Begin " + getDateBegin() + "\t" + 
+				" Date End " + getDateEnd() + "\n";
 		return str;
 	}
 }

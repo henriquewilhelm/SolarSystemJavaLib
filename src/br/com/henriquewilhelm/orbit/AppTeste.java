@@ -1,5 +1,6 @@
 package br.com.henriquewilhelm.orbit;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Classe of Test App for current date
@@ -27,6 +28,7 @@ public class AppTeste {
 		GpsCoordinate gps = new GpsCoordinate(LATITUDE, LONGITUDE);
 		// current date	
 		Calendar calendar = Calendar.getInstance();
+//		calendar.setTimeZone(TimeZone.getTimeZone("America/Chicago"));
 //		calendar.set(Calendar.YEAR, 2018);
 //		calendar.set(Calendar.MONTH, 0);
 //		calendar.set(Calendar.DAY_OF_MONTH, 10);

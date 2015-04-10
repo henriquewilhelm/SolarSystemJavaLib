@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 
 /**
@@ -52,7 +53,7 @@ public class Result implements Serializable {
 	/**
 	 * Array list of Event Moon 
 	 */
-	private ArrayList<ArrayList<Event>> solarYear;
+	private ArrayList<ArrayList<SunEvent>> solarYear;
 	
 	/**
 	 * Array list of Event Moon 
@@ -71,11 +72,13 @@ public class Result implements Serializable {
 	/**
 	 * Eclipse Lunar List
 	 */
-	private ArrayList<EclipseEvent> eclipseLunar;
+	private ArrayList<MoonEvent> eclipseLunar;
 	/**
 	 * Eclipse Solar List
 	 */
-	private ArrayList<EclipseEvent> eclipseSolar;
+	private ArrayList<SunEvent> eclipseSolar;
+	
+	private TimeZone timeZone;
 	
 	public Event getSun() {
 		return sun;
@@ -143,22 +146,22 @@ public class Result implements Serializable {
 	public void setPerigeeList(ArrayList<MoonEvent> perigeeList) {
 		this.perigeeList = perigeeList;
 	}
-	public ArrayList<EclipseEvent> getEclipseLunar() {
+	public ArrayList<MoonEvent> getEclipseLunar() {
 		return eclipseLunar;
 	}
-	public void setEclipseLunar(ArrayList<EclipseEvent> eclipseLunar) {
+	public void setEclipseLunar(ArrayList<MoonEvent> eclipseLunar) {
 		this.eclipseLunar = eclipseLunar;
 	}
-	public ArrayList<EclipseEvent> getEclipseSolar() {
+	public ArrayList<SunEvent> getEclipseSolar() {
 		return eclipseSolar;
 	}
-	public void setEclipseSolar(ArrayList<EclipseEvent> eclipseSolar) {
+	public void setEclipseSolar(ArrayList<SunEvent> eclipseSolar) {
 		this.eclipseSolar = eclipseSolar;
 	}
-	public ArrayList<ArrayList<Event>> getSolarYear() {
+	public ArrayList<ArrayList<SunEvent>> getSolarYear() {
 		return solarYear;
 	}
-	public void setSolarYear(ArrayList<ArrayList<Event>> solarYear) {
+	public void setSolarYear(ArrayList<ArrayList<SunEvent>> solarYear) {
 		this.solarYear = solarYear;
 	}
 	public ArrayList<ArrayList<ArrayList<Event>>> getPlanetYear() {
@@ -167,7 +170,13 @@ public class Result implements Serializable {
 	public void setPlanetYear(ArrayList<ArrayList<ArrayList<Event>	>> planetYear) {
 		this.planetYear = planetYear;
 	}
-    
+	public TimeZone getTimeZone() {
+		return timeZone;
+	}
+	
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
 	/**
 	 * Contrutor of Result
 	 */   
@@ -183,6 +192,7 @@ public class Result implements Serializable {
 		StringWriter sw = new StringWriter();
 		PrintWriter writer = new PrintWriter(sw);
 		
+		writer.printf("TimeZone: " + getTimeZone().getID() + "\n");
 		if(sun.getRise() != null) {
 			writer.printf("\nSunrise %s", formatTimeAndAzimuth(sun.getRise(), sun.getRiseAzimuth()));
 		}
@@ -277,11 +287,11 @@ public class Result implements Serializable {
 					  moonTomorrow.getPerigeeOrApogee(),
 					  moonTomorrow.getAnglePhase());
 		
-		writer.println("\nPlanets");
-		for (int i = 0; i < planetList.size(); i++) {
-			writer.printf(planetList.get(i).toString());
-		}
-		
+//		writer.println("\nPlanets");
+//		for (int i = 0; i < planetList.size(); i++) {
+//			writer.printf(planetList.get(i).toString());
+//		}
+//		
 //		writer.println("\nSolar Year");
 //		for (int i = 0; i < solarYear.size(); i++) {
 //			for (int j = 0; j < solarYear.get(i).size(); j++) {
@@ -289,21 +299,21 @@ public class Result implements Serializable {
 //			}
 //		}
 //		
-//		writer.println("\nLunar Year");
-//		for (int i = 0; i < lunarYear.size(); i++) {
-//			for (int j = 0; j < lunarYear.get(i).size(); j++) {
-//				writer.printf(lunarYear.get(i).get(j).toString());
-//			}
+		writer.println("\nLunar Year");
+		for (int i = 0; i < lunarYear.size(); i++) {
+			for (int j = 0; j < lunarYear.get(i).size(); j++) {
+				writer.printf(lunarYear.get(i).get(j).toString());
+			}
+		}
+//		writer.println("\nApogee");
+//		for (int j = 0; j < apogeeList.size(); j++) {
+//			writer.printf(apogeeList.get(j).toString());
 //		}
-		writer.println("\nApogee");
-		for (int j = 0; j < apogeeList.size(); j++) {
-			writer.printf(apogeeList.get(j).toString());
-		}
-		writer.println("\nPerigee");
-		for (int j = 0; j < perigeeList.size(); j++) {
-			writer.printf(perigeeList.get(j).toString());
-		}
-		
+//		writer.println("\nPerigee");
+//		for (int j = 0; j < perigeeList.size(); j++) {
+//			writer.printf(perigeeList.get(j).toString());
+//		}
+//		
 		writer.println("\nEclipse Lunar");
 		for (int i = 0; i < eclipseLunar.size(); i++) {
 				writer.printf(eclipseLunar.get(i).toString());

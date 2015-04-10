@@ -223,15 +223,13 @@ public class Event implements Serializable {
 	@Override
 	public String toString() {
 			String str = getName() + "\t" +
-				 " JulianDate "+ getJulianDate() + "\t" +
-				 " Date " + getDate() + "\t";
-			str = str + " Rise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t" ;
-		
-			str = str + " Set " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t";
-		
-			str = str + " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
-				 " Right Ascention " + getPosition().getRightAscention() + "\t" +
-				 " Zodiac " + getZodiac() +"\n";
+					 " JulianDate "+ getJulianDate() + "\t" +
+					 " Date " + getDate() + "\t" +
+				 	 " Rise " + formatTimeAndAzimuth(getRise(), getRiseAzimuth()) + "\t" +
+				 	 " Set " + formatTimeAndAzimuth(getSet(), getSetAzimuth()) + "\t" +
+				 	 " Long. Ecliptic " + getPosition().getLongitudeEcliptic() + "\t" +
+					 " Right Ascention " + getPosition().getRightAscention() + "\t" +
+					 " Zodiac " + getZodiac() +"\n";
 		return str;
 	}
 	
